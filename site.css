@@ -159,3 +159,11 @@ html,body{height:100%;overflow:hidden}
 .prize-editor .prize-save{padding:9px 15px;background:#244d35;border-color:#558e65;color:#d8f6da}
 .prize-editor .prize-save:disabled{opacity:.38}
 .prize-editor .delete{padding:9px 14px}
+
+/* Read-only history result preview: displayed above the admin panel. */
+.reward-overlay{z-index:40}
+.history-result-cell{min-width:150px}
+.history-result-cell span{display:block}
+.history-preview{display:inline-flex;align-items:center;justify-content:center;margin-top:7px;padding:6px 10px;border:1px solid #5b9574;border-radius:8px;background:#1e3b2c;color:#c2f0cb;font:700 11px Manrope,Arial,sans-serif;cursor:pointer;transition:background .2s,border-color .2s}
+.history-preview:hover{background:#2a5740;border-color:#93d4a5}
+.history-preview:focus-visible{outline:2px solid #a6d7b2;outline-offset:2px}
