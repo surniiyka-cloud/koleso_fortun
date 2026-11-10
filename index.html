@@ -401,7 +401,21 @@ $('exportCsv').onclick=()=>{if(!logged)return;let rows=[['Дата','Участ�
  download('tian-history.csv','\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n'),'text/csv;charset=utf-8')};
 $('exportJson').onclick=()=>{if(logged)download('tian-backup.json',JSON.stringify({prizes,history},null,2),'application/json')};
 $('importBtn').disabled=true;$('importBtn').title='Импорт отключён во избежание перезаписи защищённой истории';
-$('clearHistory').disabled=true;$('clearHistory').title='Удаление истории выполняется только через защищённую консоль Supabase';
+$('clearHistory').disabled=false;
+$('clearHistory').onclick=async()=>{
+ if(!logged||spinning)return;
+ if(!confirm('Очистить историю всех розыгрышей? Действие необратимо.'))return;
+ const btn=$('clearHistory');btn.disabled=true;
+ try{
+  const {data,error}=await db.rpc('fortune_clear_history');
+  if(error)throw error;
+  await loadHistory();renderAdmin();
+  needsReroll=false;person='';
+  $('spin').disabled=false;$('spin').textContent='Крутить колесо ✦';
+  closeReward();toast('История очищена. Удалено записей: '+data);
+ }catch(e){toast('Ошибка: '+errorMessage(e)+'. Проверь supabase/clear_history.sql')}
+ finally{btn.disabled=false}
+};
 window.addEventListener('resize',draw);draw();
 (async()=>{if(!db){$('spin').disabled=true;$('spin').textContent='Ожидание подключения Supabase';toast('Нужно настроить Supabase URL и publishable key в supabase-config.js');return}
  try{await loadPrizes();await checkAdmin()}catch(e){toast('Ошибка подключения: '+errorMessage(e))}})();
