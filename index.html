@@ -137,12 +137,8 @@ td{color:#385448}
 <div class="shell"><header class="head"><div class="logo"><div class="mark">Т</div><div><strong>ТИАН-ТРЕЙД</strong><small>ПАРТНЁР УСПЕШНЫХ</small></div></div><button class="ghost" id="openAdmin">⚙ Администратор</button></header>
 <section class="hero"><span class="tag">Подарки, которые хочется выиграть</span><h1>Колесо <span>возможностей</span></h1><p>Немного удачи, приятные привилегии и один счастливый поворот. Твой подарок уже ждёт.</p></section>
 <main class="layout"><div class="wheelbox"><div class="wheel-decor">THE LUCKY SPIN <span>✳</span> ТИАН-ТРЕЙД</div><div class="ring"><div class="pointer"></div><canvas id="wheel"></canvas><div class="cap">ТИАН</div></div><p class="wheel-caption">Нажми «Крутить колесо» — и доверься удаче</p></div><div class="side"><section class="card entry-card"><span class="tag">Твой момент удачи / 01</span><h2 style="margin-top:10px">Попробуй свою удачу</h2><p>Введи имя и фамилию, запусти колесо и узнай, какой бонус приготовила для тебя команда ТИАН-Трейд.</p><div class="fields"><input id="first" maxlength="60" placeholder="Имя" autocomplete="given-name"><input id="last" maxlength="60" placeholder="Фамилия" autocomplete="family-name"></div><button class="primary" id="spin">Крутить колесо ✦</button><div class="subtle">Один подарок на имя и фамилию. Антикарточка даёт повторную попытку.</div></section><section class="card result hidden" id="result"><span class="tag" id="resultTag"></span><h2 id="resultTitle"></h2><p id="resultText"></p><button class="primary hidden" id="reroll">Крутить ещё раз ↻</button></section></div></main>
-<section class="catalog-section" aria-label="Список подарков">
- <div class="catalog-heading"><div><span class="eyebrow">12 ПОВОДОВ УЛЫБНУТЬСЯ</span><h2>Что можно выиграть?</h2></div><p>Число на колесе соответствует подарку в списке. Каждый сектор — новый шанс на приятный бонус.</p></div>
- <div id="prizeCatalog" class="catalog-grid"></div>
- </section>
 <footer class="footer"><span>© ТИАН-ТРЕЙД · Колесо возможностей</span><span>Сделано для тех, кто делает больше</span></footer></div>
-<div class="overlay hidden" id="loginOverlay"><section class="modal" style="max-width:420px"><div class="modalhead"><h2>Вход администратора</h2><button class="close" data-close="loginOverlay">×</button></div><div class="pad"><p style="color:var(--muted);font-size:13px">Введите пароль для доступа к управлению призами и истории.</p><form id="loginForm"><input class="input" id="adminEmail" type="email" required autocomplete="username" placeholder="Email администратора" style="margin-bottom:10px"><input class="input" id="adminPassword" type="password" required autocomplete="current-password" placeholder="Пароль"><button class="primary" id="loginButton" type="submit">Войти</button><p id="loginError" aria-live="polite"></p></form></div></section></div>
+<div class="overlay hidden" id="loginOverlay"><section class="modal" style="max-width:420px"><div class="modalhead"><h2>Вход администратора</h2><button class="close" data-close="loginOverlay">×</button></div><div class="pad"><p style="color:var(--muted);font-size:13px">Введите пароль администратора.</p><form id="loginForm"><input class="input" id="adminPassword" type="password" required autocomplete="current-password" placeholder="Пароль"><button class="primary" id="loginButton" type="submit">Войти</button><p id="loginError" aria-live="polite"></p></form></div></section></div>
 <div class="overlay hidden" id="adminOverlay"><section class="modal"><div class="modalhead"><div><span class="tag">CONTROL CENTER</span><h2>Панель администратора</h2></div><button class="close" data-close="adminOverlay">×</button></div><div class="pad"><div class="tools"><button class="ghost" id="exportCsv">Экспорт CSV</button><button class="ghost" id="exportJson">Резервная копия</button><button class="ghost" id="importBtn">Импорт JSON</button><button class="ghost" id="clearHistory">Очистить историю</button><button class="ghost" id="logout">Выйти</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><div class="adminGrid"><section><h3>Призы <span id="prizeCount"></span></h3><div class="list" id="prizeList"></div><div class="tools"><input class="input" id="newTitle" placeholder="Название нового приза" maxlength="120"><button class="ghost" id="addPrize">+ Добавить сектор</button></div></section><section><h3>История розыгрыша</h3><div class="stats"><div class="stat"><b id="statPlayers">0</b><small>Участников</small></div><div class="stat"><b id="statWins">0</b><small>Подарков</small></div><div class="stat"><b id="statRerolls">0</b><small>Антикарточек</small></div></div><div class="history" id="history"></div></section></div><p class="note">Данные синхронизируются через Supabase. Доступ к управлению призами и истории ограничен серверными правилами доступа (RLS).</p></div></section></div>
 <div class="hidden" id="notice" role="status"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -186,19 +182,10 @@ function draw(){
  ctx.beginPath();ctx.arc(0,0,R,0,2*Math.PI);ctx.lineWidth=2;ctx.strokeStyle='#fffef5';ctx.stroke();
  ctx.restore();
 }
-function renderCatalog(){
- const catalog=$('prizeCatalog');if(!catalog)return;catalog.replaceChildren();
- prizes.forEach((p,i)=>{
-  const item=document.createElement('div');item.className='catalog-item';
-  const num=document.createElement('span');num.className='catalog-number'+(p.is_anti?' anti':'');num.textContent=String(i+1).padStart(2,'0');
-  const title=document.createElement('span');title.textContent=p.title;title.className='catalog-label';
-  item.append(num,title);catalog.append(item);
- });
-}
 async function loadPrizes(){
  if(!db)return;
  const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;prizes=data||[];draw();renderCatalog();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
+ if(error)throw error;prizes=data||[];draw();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
 }
 async function loadHistory(){
  if(!db||!logged)return;
@@ -245,7 +232,7 @@ async function spin(){
 }
 $('spin').onclick=spin;$('reroll').onclick=spin;
 $('openAdmin').onclick=async()=>{if(!db){toast('Supabase ещё не настроен — смотри README в GitHub');return}
- if(logged){await refreshAdmin();show('adminOverlay')}else{$('loginError').textContent='';show('loginOverlay');$('adminEmail').focus()}};
+ if(logged){await refreshAdmin();show('adminOverlay')}else{$('loginError').textContent='';show('loginOverlay');$('adminPassword').focus()}};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>hide(b.dataset.close));
 document.querySelectorAll('.overlay').forEach(el=>el.onclick=e=>{if(e.target===el)hide(el.id)});
 async function checkAdmin(){
@@ -257,7 +244,7 @@ async function checkAdmin(){
 $('loginForm').onsubmit=async e=>{
  e.preventDefault();$('loginError').textContent='';$('loginButton').disabled=true;
  try{
-  const {error}=await db.auth.signInWithPassword({email:$('adminEmail').value.trim(),password:$('adminPassword').value});
+  const {error}=await db.auth.signInWithPassword({email:'surniiyka@mail.ru',password:$('adminPassword').value});
   if(error)throw error;
   if(!await checkAdmin()){await db.auth.signOut();throw Error('У пользователя нет прав администратора. Добавь его в fortune_admins.')}
   $('adminPassword').value='';hide('loginOverlay');await refreshAdmin();show('adminOverlay')
