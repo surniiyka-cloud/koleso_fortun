@@ -44,7 +44,7 @@ async function loadPrizes(){
 }
 async function loadHistory(){
  if(!db||!logged)return;
- const {data,error}=await db.from('fortune_spins').select('id,full_name,prize_title,is_anti,created_at').order('created_at',{ascending:false}).limit(2000);
+ const {data,error}=await db.from('fortune_spins').select('id,full_name,prize_id,prize_title,is_anti,created_at').order('created_at',{ascending:false}).limit(2000);
  if(error)throw error;history=data||[];
 }
 const GIFT_STORIES={
@@ -138,6 +138,16 @@ $('loginForm').onsubmit=async e=>{
 };
 $('logout').onclick=async()=>{if(db)await db.auth.signOut();logged=false;adminUser=null;hide('adminOverlay');toast('Вы вышли из панели администратора')};
 async function refreshAdmin(){if(!logged)return;await Promise.all([loadPrizes(),loadHistory()]);renderAdmin()}
+function openHistoryPreview(record){
+ if(!logged)return;
+ const prize=prizes.find(p=>p.id===record.prize_id)||prizes.find(p=>p.title.toLocaleLowerCase('ru')===record.prize_title.toLocaleLowerCase('ru'));
+ if(record.is_anti){
+  showReward('⚡ ПРОСМОТР ИСТОРИИ',record.prize_title,'Но мы же не оставим тебя без подарка в день рождения? Крути ещё раз!',true);
+  hide('reroll');show('rewardDone');
+ }else{
+  showReward('✦ ПРОСМОТР ВЫИГРЫША',record.prize_title,prize?.description||'');
+ }
+}
 function renderAdmin(){
  if(!logged)return;const root=$('prizeList');root.replaceChildren();$('prizeCount').textContent='('+prizes.length+')';
  prizes.forEach((p,i)=>{
@@ -185,8 +195,16 @@ function renderAdmin(){
  const area=$('history');area.replaceChildren();if(!h.length){area.textContent='История пока пуста';area.style.padding='16px';return}
  area.style.padding='0';let table=document.createElement('table'),thead=document.createElement('thead'),header=document.createElement('tr');
  ['Дата','Участник','Результат'].forEach(s=>{let th=document.createElement('th');th.textContent=s;header.append(th)});thead.append(header);table.append(thead);
- let body=document.createElement('tbody');h.forEach(x=>{let tr=document.createElement('tr');
- [new Date(x.created_at).toLocaleString('ru-RU'),x.full_name,x.prize_title].forEach(s=>{let td=document.createElement('td');td.textContent=s;tr.append(td)});body.append(tr)});
+ let body=document.createElement('tbody');h.forEach(x=>{
+  let tr=document.createElement('tr');
+  [new Date(x.created_at).toLocaleString('ru-RU'),x.full_name].forEach(s=>{let td=document.createElement('td');td.textContent=s;tr.append(td)});
+  const resultCell=document.createElement('td');resultCell.className='history-result-cell';
+  const resultName=document.createElement('span');resultName.textContent=x.prize_title;
+  const view=document.createElement('button');view.type='button';view.className='history-preview';view.textContent='Посмотреть';
+  view.setAttribute('aria-label','Посмотреть выигрыш: '+x.prize_title);
+  view.onclick=()=>openHistoryPreview(x);
+  resultCell.append(resultName,view);tr.append(resultCell);body.append(tr)
+ });
  table.append(body);area.append(table)
 }
 $('addPrize').onclick=async()=>{if(!logged||spinning)return;
