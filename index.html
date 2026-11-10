@@ -2,12 +2,106 @@
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1215"><title>ТИАН-Трейд — Колесо возможностей</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0c1317;--card:#192429;--edge:#35484c;--muted:#9dafaf;--green:#83dda1;--orange:#f27b4c;--white:#f8faf7}*{box-sizing:border-box}body{background:radial-gradient(ellipse at 45% -20%,#244d3d 0,transparent 56%),radial-gradient(ellipse at 100% 90%,#39251f 0,transparent 40%),var(--bg);color:var(--white);font-family:Manrope,Arial,sans-serif;margin:0;min-height:100vh}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.shell{max-width:1220px;margin:auto;padding:0 28px}.head{display:flex;align-items:center;justify-content:space-between;padding:30px 0;gap:12px}.logo{display:flex;align-items:center;gap:12px}.mark{display:grid;place-items:center;background:linear-gradient(145deg,#375c44,#142923);border:1px solid #63866c;width:48px;height:48px;border-radius:14px;font-weight:800;font-size:25px}.logo strong{display:block;font-size:15px;letter-spacing:.12em}.logo small{color:var(--muted);font-size:10px;letter-spacing:.15em}.ghost{background:#1b282d;border:1px solid #425957;border-radius:30px;padding:11px 17px;color:#def3e5;font-size:12px;font-weight:800}.ghost:hover{border-color:var(--green)}.hero{text-align:center;margin:30px 0 16px}.tag{display:inline-block;color:var(--green);font-size:11px;letter-spacing:.22em;font-weight:800}.hero h1{font-size:clamp(37px,6vw,75px);letter-spacing:-.06em;line-height:1.1;margin:12px 0}.hero h1 span{color:var(--orange)}.hero p{color:var(--muted);font-size:14px;line-height:1.7}.layout{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);align-items:center;gap:38px;margin:8px 0 48px}.wheelbox{position:relative;padding:35px 12px}.wheelbox:before{content:"";position:absolute;inset:17%;background:#2e9160;filter:blur(80px);opacity:.17;pointer-events:none}.ring{position:relative;margin:auto;width:min(100%,560px);aspect-ratio:1;padding:15px;border-radius:50%;background:linear-gradient(125deg,#456659,#101f22 46%,#698d7a);box-shadow:0 16px 70px #0009,0 0 0 10px #101b1e}canvas{width:100%;height:100%;display:block;border-radius:50%}.pointer{position:absolute;z-index:2;top:-15px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:45px solid #fff9e9;filter:drop-shadow(0 2px 5px #0008)}.cap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;border:6px solid #f4f3e6;background:radial-gradient(circle at 30% 20%,#5b9870,#17372b 75%);display:grid;place-items:center;font-weight:800;letter-spacing:.1em;pointer-events:none}.side{display:grid;gap:18px}.card{background:linear-gradient(140deg,#1b292df3,#121d20f5);border:1px solid var(--edge);border-radius:22px;padding:28px;box-shadow:0 12px 45px #0003}.card h2{font-size:21px;letter-spacing:-.04em;margin:0 0 8px}.card p{font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 17px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fields input,.input{background:#101a1e;border:1px solid #43595c;border-radius:12px;padding:14px;color:white;outline:none;min-width:0;width:100%}.fields input:focus,.input:focus{border-color:var(--green)}.primary{width:100%;background:linear-gradient(110deg,#9ff1b3,#58cb8e);border:0;border-radius:13px;padding:16px;color:#11231d;font-size:14px;font-weight:800;margin-top:13px}.primary:hover{filter:brightness(1.08)}.subtle{font-size:11px;color:var(--muted);margin-top:12px}.result h2{font-size:26px}.result.warning{border-color:#985b43;background:linear-gradient(135deg,#382820,#1b2424)}.result.warning .tag{color:#ffbc97}.info{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:44px}.info>div{border:1px solid #2f4144;border-radius:16px;padding:17px;background:#152125}.info b{font-size:12px}.info p{font-size:11px;line-height:1.5;color:var(--muted);margin:7px 0 0}.footer{border-top:1px solid #2e4142;display:flex;justify-content:space-between;color:#879c9d;padding:22px 0;font-size:11px}.hidden{display:none!important}.overlay{position:fixed;inset:0;z-index:10;background:#000b;backdrop-filter:blur(9px);display:grid;place-items:center;padding:14px}.modal{background:#142024;border:1px solid #475a55;border-radius:22px;width:min(100%,1020px);max-height:94vh;overflow:auto;box-shadow:0 20px 90px #000b}.modalhead{padding:22px 25px;border-bottom:1px solid var(--edge);display:flex;justify-content:space-between;align-items:center;gap:20px}.modalhead h2{margin:0;font-size:22px}.close{border:1px solid var(--edge);background:#213034;color:white;border-radius:10px;width:38px;height:38px;font-size:22px}.pad{padding:25px}.adminGrid{display:grid;grid-template-columns:1fr 1fr;gap:25px}.list{display:grid;gap:8px;max-height:440px;overflow:auto}.prize{display:flex;gap:7px;align-items:center;padding:8px;background:#1b2b2e;border:1px solid var(--edge);border-radius:10px}.prize input{flex:1;min-width:0;background:#101b1d;color:white;border:1px solid #405357;border-radius:8px;padding:10px;font-size:12px}.prize span{font-size:10px;color:#ffb68e;font-weight:800}.delete{background:#342326;color:#ffc6aa;border:1px solid #654845;border-radius:8px;padding:8px 12px}.tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.tools button{font-size:11px}.stats{display:flex;gap:8px}.stat{flex:1;background:#1c2e2e;border:1px solid var(--edge);border-radius:12px;padding:13px}.stat b{color:var(--green);font-size:23px;display:block}.stat small{font-size:10px;color:var(--muted)}.history{margin-top:13px;max-height:440px;overflow:auto;border:1px solid var(--edge);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:11px}th,td{padding:11px;text-align:left;border-bottom:1px solid var(--edge)}th{background:#233338;position:sticky;top:0}#notice{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#284b39;border:1px solid #72ae83;border-radius:12px;padding:12px 17px;font-size:12px;z-index:30}#loginError{min-height:18px;color:#ffb09b;font-size:12px}.note{color:#f2c394;font-size:11px;line-height:1.6}@media(max-width:920px){.layout{grid-template-columns:1fr;gap:4px}.wheelbox{width:min(100%,580px);margin:auto}.side{max-width:650px;margin:auto;width:100%}.adminGrid{grid-template-columns:1fr}}@media(max-width:570px){.shell{padding:0 15px}.head{padding:18px 0}.logo strong{font-size:12px}.logo small{font-size:9px}.mark{width:40px;height:40px}.hero{margin:20px 0}.hero p{font-size:12px}.ring{padding:10px}.wheelbox{padding:28px 4px}.pointer{border-left-width:13px;border-right-width:13px;border-top-width:33px;top:-10px}.cap{width:58px;height:58px;border-width:4px;font-size:12px}.card{padding:22px}.fields{grid-template-columns:1fr}.info{grid-template-columns:1fr}.footer{display:block}.pad{padding:15px}.modalhead{padding:15px}}
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700;800&display=swap');
+:root{--bg:#f7f6f0;--ink:#14251e;--forest:#153e30;--leaf:#27754b;--lime:#d6f4b1;--orange:#f16b39;--muted:#778078;--line:#dfe6dc;--cream:#fffef9}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:var(--bg);font-family:Manrope,Arial,sans-serif;min-height:100vh;overflow-x:hidden}
+button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,input:focus-visible{outline:3px solid #f99469;outline-offset:3px}
+.shell{max-width:1380px;margin:auto;padding:0 45px;position:relative}
+.head{height:98px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #dce4da}
+.logo{display:flex;align-items:center;gap:13px}
+.mark{width:51px;height:51px;border-radius:16px;display:grid;place-items:center;background:var(--forest);color:#eeffeb;font-family:Unbounded;font-size:23px;box-shadow:0 5px 16px #173f3029}
+.logo strong{display:block;letter-spacing:.12em;font-size:15px;font-weight:800;color:#153a2c}
+.logo small{font-size:9px;letter-spacing:.21em;color:#8b958d;font-weight:800}
+.ghost{background:#fffefa;border:1px solid #d7e1d6;color:var(--forest);font-size:12px;font-weight:800;border-radius:12px;padding:13px 18px;transition:.2s}
+.ghost:hover{background:#e8f2e7;border-color:#a3c6aa;transform:translateY(-1px)}
+.hero{margin:0 auto;text-align:center;padding:52px 0 0;position:relative;z-index:1}
+.hero:before{content:'';position:absolute;width:85px;height:85px;left:4%;top:70px;border:1px solid #d5e3d5;border-radius:50%;box-shadow:0 0 0 22px #e9efe66b,0 0 0 45px #e9efe640;z-index:-1}
+.tag{font-size:11px;letter-spacing:.18em;font-weight:800;text-transform:uppercase;color:#42805a}
+.hero .tag{display:inline-flex;gap:10px;align-items:center;background:#e4efdc;border:1px solid #d2e3c8;border-radius:100px;padding:10px 16px;color:#316b45;letter-spacing:.14em}
+.hero .tag:before{content:'';width:7px;height:7px;border-radius:100%;background:#e57846;box-shadow:0 0 0 4px #e5784620}
+.hero h1{font-family:Unbounded,Manrope,sans-serif;font-weight:700;font-size:clamp(36px,5.2vw,73px);line-height:1.18;letter-spacing:-.065em;margin:20px 0 10px;color:#142d24}
+.hero h1 span{color:var(--orange);position:relative}
+.hero p{font-size:14px;color:#77847a;line-height:1.7;margin:0}
+.layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(340px,.72fr);gap:clamp(24px,4vw,70px);align-items:center;margin:-5px 0 58px}
+.wheelbox{padding:40px 5px;position:relative;min-width:0}
+.wheelbox:before{content:'';position:absolute;inset:12% 8%;border-radius:50%;background:radial-gradient(ellipse,#d6edcd 0%,#f0f6e8 54%,transparent 70%);filter:blur(17px);pointer-events:none}
+.wheelbox:after{content:'✳';position:absolute;bottom:40px;left:9%;color:#e6aa89;font-size:50px;opacity:.4;pointer-events:none}
+.ring{position:relative;width:min(100%,638px);aspect-ratio:1;margin:auto;border-radius:50%;padding:17px;background:#fffdf5;box-shadow:0 0 0 1px #d3dfd0,0 0 0 9px #ebf0e8,0 0 0 10px #d3e0d1,0 36px 75px #24433226,0 12px 28px #24433212;z-index:1}
+.ring:before{content:'';position:absolute;inset:7px;border-radius:50%;border:1px dashed #cadcc9;pointer-events:none}
+canvas{display:block;width:100%;height:100%;border-radius:50%;filter:drop-shadow(0 6px 8px #173c2c16)}
+.pointer{position:absolute;z-index:4;top:-13px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:19px solid transparent;border-right:19px solid transparent;border-top:49px solid var(--forest);filter:drop-shadow(0 3px 4px #10241b33)}
+.pointer:before{content:'';position:absolute;top:-26px;left:-7px;width:14px;height:14px;border-radius:50%;background:#ee7544}
+.cap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:99px;height:99px;background:radial-gradient(circle at 30% 24%,#307c55,#0e3527 76%);border:9px solid #fffdf3;border-radius:50%;box-shadow:0 5px 13px #173b2840;color:#f6fff4;letter-spacing:.06em;font-family:Unbounded,Manrope,sans-serif;font-size:15px;font-weight:700;pointer-events:none;z-index:3}
+.side{display:flex;flex-direction:column;gap:20px;align-items:stretch}
+.card{background:#fffefa;border:1px solid #e1e8df;border-radius:27px;padding:36px;box-shadow:0 22px 70px #2d4b3320,0 3px 9px #2d4b3308}
+.side>.card:first-child{background:var(--forest);color:#f9fff6;position:relative;overflow:hidden;border:1px solid #1e6046;box-shadow:0 24px 65px #18433131}
+.side>.card:first-child:after{content:'';position:absolute;width:245px;height:245px;right:-150px;top:-165px;border-radius:50%;border:35px solid #ffffff0c;box-shadow:0 0 0 44px #fff1;pointer-events:none}
+.side>.card:first-child .tag{color:#b2edab}
+.card h2{font-family:Unbounded,Manrope,sans-serif;font-size:clamp(19px,2vw,25px);line-height:1.4;letter-spacing:-.045em;margin:9px 0 12px}
+.card p{font-size:13px;line-height:1.8;color:#73847b;margin:0 0 22px}
+.side>.card:first-child p{color:#c1d3c7}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:11px;position:relative;z-index:1}
+.fields input,.input{width:100%;min-width:0;background:#fffefa;border:1px solid #d5e1d7;border-radius:12px;padding:15px 15px;color:#1c392a;outline:none;font-size:13px}
+.fields input::placeholder,.input::placeholder{color:#8b9a8e}
+.fields input:focus,.input:focus{border-color:#e9764c;box-shadow:0 0 0 3px #ec875526}
+.primary{width:100%;background:var(--orange);color:#fffdfa;border:0;border-radius:13px;padding:17px 20px;font-size:14px;font-weight:800;margin-top:14px;box-shadow:0 8px 24px #c84d2940;transition:.2s;position:relative}
+.primary:hover:not(:disabled){background:#ff7a48;transform:translateY(-2px);box-shadow:0 12px 24px #bd4d2d55}
+.side>.card:first-child .primary{background:#e8ffba;color:#173728;box-shadow:0 6px 20px #081e1533}
+.side>.card:first-child .primary:hover:not(:disabled){background:#f0ffda}
+.subtle{font-size:11px;line-height:1.6;color:#b1c8b9;margin-top:16px}
+.result{background:#ecf8e8;border-color:#acd4a8;animation:appear .4s ease}
+.result h2{color:#194c34;font-size:24px;margin-top:12px}
+.result p{color:#4d705b}
+.result.warning{background:#fff0e8;border-color:#e8bba6}
+.result.warning .tag,.result.warning h2{color:#ab532f}
+.result.warning p{color:#815a49}
+.hidden{display:none!important}
+.info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-bottom:52px}
+.info>div{background:#fffefa;border:1px solid #e1e8df;border-radius:21px;padding:25px;transition:.2s}
+.info>div:hover{transform:translateY(-3px);box-shadow:0 12px 25px #234b3020}
+.info b{font-size:14px;font-weight:800;color:#1c4b34}
+.info p{font-size:12px;color:#7c8b80;line-height:1.7;margin:9px 0 0}
+.footer{border-top:1px solid #dbe4da;display:flex;justify-content:space-between;gap:16px;font-size:11px;color:#8b9b8f;padding:24px 0 34px}
+.overlay{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#0a1b14b8;backdrop-filter:blur(9px);padding:16px}
+.modal{background:#fafcf8;color:#183328;border:1px solid #d5e2d7;box-shadow:0 26px 95px #07150eb0;border-radius:26px;width:min(100%,1080px);max-height:94vh;overflow:auto}
+.modalhead{padding:23px 28px;display:flex;align-items:center;justify-content:space-between;gap:15px;background:#eff5eb;border-bottom:1px solid #d8e4d8}
+.modalhead h2{font-family:Unbounded,Manrope,sans-serif;font-size:20px;margin:0}
+.close{display:grid;place-items:center;width:38px;height:38px;background:#fff;border:1px solid #d7e2d5;border-radius:11px;color:#1f4634;font-size:23px}
+.pad{padding:26px}
+#loginForm .input{display:block}
+#loginError{min-height:18px;color:#bb482c;font-size:12px}
+.adminGrid{display:grid;grid-template-columns:1fr 1fr;gap:27px}
+.adminGrid h3{font-family:Unbounded,Manrope,sans-serif;font-size:16px}
+.list{display:grid;gap:8px;max-height:445px;overflow:auto;padding-right:3px}
+.prize{display:flex;align-items:center;gap:8px;padding:7px;background:#edf3ec;border:1px solid #dae6d9;border-radius:11px}
+.prize input{flex:1;min-width:0;background:#fff;border:1px solid #d4e1d4;border-radius:8px;padding:11px;font-size:12px;color:#1c3a29}
+.prize span{font-size:10px;color:#bf633a;font-weight:800}
+.delete{border:1px solid #f2d2c6;border-radius:8px;background:#fff0e9;color:#bd6942;padding:9px 12px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.tools button{font-size:11px}
+.stats{display:flex;gap:9px}
+.stat{flex:1;padding:15px;background:#edf5e9;border:1px solid #d9e8d5;border-radius:12px}
+.stat b{font-family:Unbounded,Manrope,sans-serif;color:#246447;font-size:25px;display:block}
+.stat small{color:#77897c;font-size:10px}
+.history{margin-top:15px;max-height:455px;overflow:auto;border:1px solid #dce6da;border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:11px}
+th,td{padding:12px;text-align:left;border-bottom:1px solid #dfebdf}
+th{position:sticky;top:0;background:#edf5e9;font-weight:800;color:#41644d}
+td{color:#385448}
+.note{font-size:11px;color:#718575;line-height:1.7}
+#notice{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);max-width:min(90vw,560px);background:#153b2d;color:white;border:1px solid #72a487;border-radius:13px;padding:13px 20px;box-shadow:0 10px 25px #0003;font-size:12px;z-index:30}
+@keyframes appear{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1050px){.layout{grid-template-columns:1fr;gap:10px;margin-top:0}.wheelbox{width:min(100%,650px);margin:auto;padding:48px 15px 22px}.side{width:min(100%,670px);margin:auto}.hero{padding-top:44px}.hero:before{display:none}.info{margin-top:10px}}
+@media(max-width:700px){.shell{padding:0 18px}.head{height:75px}.mark{width:43px;height:43px;font-size:18px}.logo strong{font-size:12px}.logo small{font-size:8px}.head .ghost{padding:10px 12px;font-size:11px}.hero{padding-top:37px}.hero h1{font-size:clamp(32px,7vw,51px);line-height:1.22;margin:18px 0 12px}.hero p{font-size:12px;max-width:340px;margin:auto}.wheelbox{padding:35px 7px 15px}.ring{padding:12px;box-shadow:0 0 0 1px #d3dfd0,0 0 0 6px #ebf0e8,0 0 0 7px #d3e0d1,0 26px 45px #24433226}.pointer{top:-9px;border-left-width:14px;border-right-width:14px;border-top-width:36px}.cap{width:66px;height:66px;border-width:6px;font-size:11px}.card{border-radius:21px;padding:26px}.fields{grid-template-columns:1fr}.info{grid-template-columns:1fr;gap:10px;margin-bottom:35px}.info>div{padding:18px 21px}.footer{display:block;line-height:2}.adminGrid{grid-template-columns:1fr}.modalhead{padding:17px}.modalhead h2{font-size:16px}.pad{padding:16px}.stats{gap:6px}.stat{padding:11px}.stat b{font-size:20px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
 </style></head><body>
 <div class="shell"><header class="head"><div class="logo"><div class="mark">Т</div><div><strong>ТИАН-ТРЕЙД</strong><small>ПАРТНЁР УСПЕШНЫХ</small></div></div><button class="ghost" id="openAdmin">⚙ Администратор</button></header>
-<section class="hero"><span class="tag">SPECIAL BIRTHDAY EDITION</span><h1>Колесо <span>возможностей</span></h1><p>Сегодня удача работает на тебя. Введи имя и фамилию — и забери свой подарок!</p></section>
-<main class="layout"><div class="wheelbox"><div class="ring"><div class="pointer"></div><canvas id="wheel"></canvas><div class="cap">ТИАН</div></div></div><div class="side"><section class="card"><span class="tag">01 / УЧАСТНИК</span><h2 style="margin-top:10px">Кому сегодня повезёт?</h2><p>Представься, чтобы твой результат сохранился в общей истории розыгрыша.</p><div class="fields"><input id="first" maxlength="60" placeholder="Имя" autocomplete="given-name"><input id="last" maxlength="60" placeholder="Фамилия" autocomplete="family-name"></div><button class="primary" id="spin">Крутить колесо ✦</button><div class="subtle">Один подарок на имя и фамилию. Антикарточка даёт повторную попытку.</div></section><section class="card result hidden" id="result"><span class="tag" id="resultTag"></span><h2 id="resultTitle"></h2><p id="resultText"></p><button class="primary hidden" id="reroll">Крутить ещё раз ↻</button></section></div></main>
-<div class="info"><div><b>✦ Подарки с характером</b><p>От дополнительного выходного до права выспаться.</p></div><div><b>↻ Второй шанс</b><p>Выпала антикарточка? Колесо предложит повторную попытку.</p></div><div><b>✓ Всё по-честному</b><p>Результат случайный и фиксируется в истории.</p></div></div><footer class="footer"><span>© ТИАН-ТРЕЙД · Колесо возможностей</span><span>Сделано для тех, кто делает больше</span></footer></div>
+<section class="hero"><span class="tag">Подарки, которые хочется выиграть</span><h1>Колесо <span>возможностей</span></h1><p>Немного удачи, приятные привилегии и один счастливый поворот. Твой подарок уже ждёт.</p></section>
+<main class="layout"><div class="wheelbox"><div class="ring"><div class="pointer"></div><canvas id="wheel"></canvas><div class="cap">ТИАН</div></div></div><div class="side"><section class="card"><span class="tag">Твой момент удачи / 01</span><h2 style="margin-top:10px">Попробуй свою удачу</h2><p>Введи имя и фамилию, запусти колесо и узнай, какой бонус приготовила для тебя команда ТИАН-Трейд.</p><div class="fields"><input id="first" maxlength="60" placeholder="Имя" autocomplete="given-name"><input id="last" maxlength="60" placeholder="Фамилия" autocomplete="family-name"></div><button class="primary" id="spin">Крутить колесо ✦</button><div class="subtle">Один подарок на имя и фамилию. Антикарточка даёт повторную попытку.</div></section><section class="card result hidden" id="result"><span class="tag" id="resultTag"></span><h2 id="resultTitle"></h2><p id="resultText"></p><button class="primary hidden" id="reroll">Крутить ещё раз ↻</button></section></div></main>
+<div class="info"><div><b>✦ Больше, чем сувениры</b><p>От дополнительного выходного до права выспаться.</p></div><div><b>↻ Шанс на удачу</b><p>Выпала антикарточка? Колесо предложит повторную попытку.</p></div><div><b>✓ Результат закреплён</b><p>Выпавший приз сохраняется в общей истории.</p></div></div><footer class="footer"><span>© ТИАН-ТРЕЙД · Колесо возможностей</span><span>Сделано для тех, кто делает больше</span></footer></div>
 <div class="overlay hidden" id="loginOverlay"><section class="modal" style="max-width:420px"><div class="modalhead"><h2>Вход администратора</h2><button class="close" data-close="loginOverlay">×</button></div><div class="pad"><p style="color:var(--muted);font-size:13px">Введите пароль для доступа к управлению призами и истории.</p><form id="loginForm"><input class="input" id="adminEmail" type="email" required autocomplete="username" placeholder="Email администратора" style="margin-bottom:10px"><input class="input" id="adminPassword" type="password" required autocomplete="current-password" placeholder="Пароль"><button class="primary" id="loginButton" type="submit">Войти</button><p id="loginError" aria-live="polite"></p></form></div></section></div>
 <div class="overlay hidden" id="adminOverlay"><section class="modal"><div class="modalhead"><div><span class="tag">CONTROL CENTER</span><h2>Панель администратора</h2></div><button class="close" data-close="adminOverlay">×</button></div><div class="pad"><div class="tools"><button class="ghost" id="exportCsv">Экспорт CSV</button><button class="ghost" id="exportJson">Резервная копия</button><button class="ghost" id="importBtn">Импорт JSON</button><button class="ghost" id="clearHistory">Очистить историю</button><button class="ghost" id="logout">Выйти</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><div class="adminGrid"><section><h3>Призы <span id="prizeCount"></span></h3><div class="list" id="prizeList"></div><div class="tools"><input class="input" id="newTitle" placeholder="Название нового приза" maxlength="120"><button class="ghost" id="addPrize">+ Добавить сектор</button></div></section><section><h3>История розыгрыша</h3><div class="stats"><div class="stat"><b id="statPlayers">0</b><small>Участников</small></div><div class="stat"><b id="statWins">0</b><small>Подарков</small></div><div class="stat"><b id="statRerolls">0</b><small>Антикарточек</small></div></div><div class="history" id="history"></div></section></div><p class="note">Данные синхронизируются через Supabase. Доступ к управлению призами и истории ограничен серверными правилами доступа (RLS).</p></div></section></div>
 <div class="hidden" id="notice" role="status"></div>
@@ -25,17 +119,28 @@ function toast(msg){$('notice').textContent=msg;show('notice');clearTimeout(toas
 function errorMessage(e){return e&&e.message?e.message:'Ошибка сети или базы данных'}
 function nameOf(p){return p.title}
 function draw(){
- let size=Math.max(220,Math.round(cv.getBoundingClientRect().width)),d=Math.min(devicePixelRatio||1,2);
+ const size=Math.max(220,Math.round(cv.getBoundingClientRect().width)),d=Math.min(window.devicePixelRatio||1,2);
  cv.width=size*d;cv.height=size*d;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,size,size);
- const n=prizes.length,c=size/2,R=c-2;if(!n){ctx.fillStyle='#a9b9ad';ctx.font='700 16px Manrope,Arial';ctx.textAlign='center';ctx.fillText('Загрузка призов…',c,c*.65);return}
- let step=2*Math.PI/n;ctx.save();ctx.translate(c,c);ctx.rotate(angle);
- prizes.forEach((p,i)=>{let a=-Math.PI/2-step/2+i*step;ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,a,a+step);ctx.closePath();
- ctx.fillStyle=p.is_anti?'#87513d':['#1c7558','#e5744b','#28654c','#be5d40'][i%4];ctx.fill();ctx.strokeStyle='#e6dfc480';ctx.lineWidth=1.2;ctx.stroke();
- ctx.save();ctx.rotate(-Math.PI/2+i*step);ctx.translate(R*.63,0);ctx.rotate(Math.PI/2);
- ctx.fillStyle='#fffaf2';let fs=Math.max(8,Math.min(14,size*.024,340/n));ctx.font='800 '+fs+'px Manrope,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
- const max=n>15?12:17;let lines=[],line='';for(const word of p.title.split(/\s+/)){if((line+' '+word).trim().length>max&&line){lines.push(line);line=word}else line=(line+' '+word).trim()}if(line)lines.push(line);
- if(lines.length>3)lines=[lines[0],lines[1],lines.slice(2).join(' ').slice(0,max-1)+'…'];lines.slice(0,3).forEach((t,j)=>ctx.fillText(t.length>max?t.slice(0,max-1)+'…':t,0,(j-(Math.min(3,lines.length)-1)/2)*fs*1.16));ctx.restore()});
- ctx.beginPath();ctx.arc(0,0,R,0,2*Math.PI);ctx.strokeStyle='#e4f5e6';ctx.lineWidth=2;ctx.stroke();ctx.restore()
+ const n=prizes.length,c=size/2,R=c-2;
+ if(!n){ctx.fillStyle='#547362';ctx.font='700 16px Manrope,Arial';ctx.textAlign='center';ctx.fillText('Загрузка подарков…',c,c);return}
+ const step=2*Math.PI/n;
+ ctx.save();ctx.translate(c,c);ctx.rotate(angle);
+ const colors=['#246f4d','#e98153','#f3dfae','#3d8a63','#ffcda9','#d4eacb'];
+ prizes.forEach((p,i)=>{
+  const a=-Math.PI/2-step/2+i*step,mid=-Math.PI/2+i*step;
+  ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,a,a+step);ctx.closePath();
+  ctx.fillStyle=p.is_anti?'#bd6444':colors[i%colors.length];ctx.fill();
+  ctx.strokeStyle='#fffdf3';ctx.lineWidth=3;ctx.stroke();
+  ctx.save();ctx.rotate(mid);ctx.translate(R*.65,0);ctx.rotate(Math.PI/2);
+  const bright=p.is_anti||[0,1,3].includes(i%colors.length);ctx.fillStyle=bright?'#fffdf7':'#234936';
+  const fs=Math.max(8,Math.min(15,size*.024,360/n));ctx.font='800 '+fs+'px Manrope,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+  const max=n>15?12:17;let lines=[],line='';
+  for(const word of p.title.split(/\s+/)){if((line+' '+word).trim().length>max&&line){lines.push(line);line=word}else line=(line+' '+word).trim()}
+  if(line)lines.push(line);if(lines.length>3)lines=[lines[0],lines[1],lines.slice(2).join(' ').slice(0,max-1)+'…'];
+  lines.slice(0,3).forEach((t,j)=>ctx.fillText(t.length>max?t.slice(0,max-1)+'…':t,0,(j-(Math.min(3,lines.length)-1)/2)*fs*1.16));ctx.restore();
+ });
+ ctx.beginPath();ctx.arc(0,0,R,0,2*Math.PI);ctx.strokeStyle='#fffdf3';ctx.lineWidth=2;ctx.stroke();
+ ctx.restore();
 }
 async function loadPrizes(){
  if(!db)return;
