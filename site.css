@@ -107,3 +107,34 @@ html,body{height:100%;overflow:hidden}
 .hero{padding:9px 0}
 .hero h1{font-size:clamp(34px,4vw,53px);margin:7px 0}
 }
+/* Center the wheel and participant form as one balanced desktop composition. */
+@media (min-width:801px){
+ .layout{
+  grid-template-columns:minmax(0,1fr) minmax(350px,490px);
+  align-items:center;
+  justify-items:center;
+  gap:clamp(20px,3.2vw,48px);
+ }
+ .wheelbox{
+  width:100%;
+  height:auto;
+  max-height:100%;
+  align-self:center;
+  justify-self:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+ }
+ .side{
+  width:100%;
+  max-width:490px;
+  align-self:center;
+  justify-self:center;
+ }
+ .entry-card{width:100%;margin:0}
+}
+@media (min-width:801px) and (min-height:560px){
+ .wheelbox{height:auto;max-height:100%}
+ .ring{flex:0 1 auto}
+}
