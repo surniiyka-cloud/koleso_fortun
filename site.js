@@ -68,7 +68,7 @@ function showReward(tag,title,detail,warning=false){
  $('resultTitle').textContent=title;
  $('rewardIcon').textContent=warning?'⚡':(story?.icon||'🎁');
  $('rewardLead').textContent=warning?'Не переживай: без подарка мы тебя не оставим!':(story?.lead||'Поздравляем! Сегодня удача на твоей стороне!');
- $('resultText').textContent=warning?detail:(story?.description||detail||'Твой персональный подарок от ТИАН-Трейд!');
+ $('resultText').textContent=warning?detail:(detail?.trim()||story?.description||'Твой персональный подарок от ТИАН-Трейд!');
  $('rewardFootnote').textContent=warning?'Нажми кнопку ниже, чтобы получить свой настоящий подарок.':'Сохрани этот результат и покажи организатору, чтобы воспользоваться привилегией.';
  $('result').classList.toggle('warning',warning);
  $('reroll').classList.toggle('hidden',!warning);
@@ -141,15 +141,44 @@ async function refreshAdmin(){if(!logged)return;await Promise.all([loadPrizes(),
 function renderAdmin(){
  if(!logged)return;const root=$('prizeList');root.replaceChildren();$('prizeCount').textContent='('+prizes.length+')';
  prizes.forEach((p,i)=>{
-  let row=document.createElement('div');row.className='prize';let inp=document.createElement('input');
-  inp.value=p.title;inp.maxLength=120;inp.setAttribute('aria-label','Название приза');
-  inp.onchange=async()=>{const title=inp.value.trim();if(!title){inp.value=p.title;return}
-   const {error}=await db.from('fortune_prizes').update({title}).eq('id',p.id);if(error){inp.value=p.title;toast(errorMessage(error))}else{p.title=title;draw()}};
-  row.append(inp);if(p.is_anti){let s=document.createElement('span');s.textContent='АНТИ';row.append(s)}
-  let del=document.createElement('button');del.className='delete';del.textContent='×';del.title='Удалить сектор';del.disabled=prizes.length<=2;
-  del.onclick=async()=>{if(spinning||!confirm('Удалить сектор «'+p.title+'»?'))return;
-   const {error}=await db.from('fortune_prizes').delete().eq('id',p.id);if(error)toast(errorMessage(error));else await refreshAdmin()};
-  row.append(del);root.append(row)
+  const row=document.createElement('div');row.className='prize prize-editor';
+  const fields=document.createElement('div');fields.className='prize-fields';
+  const titleLabel=document.createElement('label');titleLabel.className='prize-label';titleLabel.textContent='Название';
+  const titleInput=document.createElement('input');titleInput.value=p.title;titleInput.maxLength=120;
+  titleInput.setAttribute('aria-label','Название приза');titleLabel.append(titleInput);
+  const descLabel=document.createElement('label');descLabel.className='prize-label';descLabel.textContent='Описание выигрыша';
+  const descInput=document.createElement('textarea');descInput.value=p.description||'';
+  descInput.maxLength=2000;descInput.rows=3;descInput.placeholder='Что даёт этот приз и как им воспользоваться';
+  descInput.setAttribute('aria-label','Описание приза');descLabel.append(descInput);
+  fields.append(titleLabel,descLabel);
+  const actions=document.createElement('div');actions.className='prize-actions';
+  if(p.is_anti){const anti=document.createElement('span');anti.textContent='АНТИКАРТОЧКА';actions.append(anti)}
+  const saveBtn=document.createElement('button');saveBtn.className='ghost prize-save';saveBtn.textContent='Сохранить';
+  saveBtn.disabled=true;
+  const dirty=()=>{saveBtn.disabled=titleInput.value.trim()===p.title && descInput.value.trim()===(p.description||'').trim()};
+  titleInput.addEventListener('input',dirty);descInput.addEventListener('input',dirty);
+  saveBtn.onclick=async()=>{
+   if(!logged)return;
+   const title=titleInput.value.trim(),description=descInput.value.trim();
+   if(!title){toast('Название не может быть пустым');titleInput.focus();return}
+   saveBtn.disabled=true;saveBtn.textContent='Сохраняем…';
+   const {data,error}=await db.from('fortune_prizes').update({title,description}).eq('id',p.id).select('title,description').single();
+   saveBtn.textContent='Сохранить';
+   if(error){toast('Не удалось сохранить: '+errorMessage(error));saveBtn.disabled=false;return}
+   p.title=data.title;p.description=data.description;
+   titleInput.value=p.title;descInput.value=p.description;
+   saveBtn.disabled=true;draw();toast('Описание приза сохранено');
+  };
+  actions.append(saveBtn);
+  const del=document.createElement('button');del.className='delete';del.textContent='Удалить';del.title='Удалить сектор';
+  del.disabled=prizes.length<=2;
+  del.onclick=async()=>{
+   if(spinning||!confirm('Удалить сектор «'+p.title+'»?'))return;
+   const {error}=await db.from('fortune_prizes').delete().eq('id',p.id);
+   if(error)toast(errorMessage(error));else await refreshAdmin();
+  };
+  actions.append(del);
+  row.append(fields,actions);root.append(row);
  });
  const h=history;$('statPlayers').textContent=new Set(h.map(x=>x.full_name.toLowerCase())).size;
  $('statWins').textContent=h.filter(x=>!x.is_anti).length;$('statRerolls').textContent=h.filter(x=>x.is_anti).length;
