@@ -11,7 +11,7 @@ begin
   if not public.fortune_is_admin() then
     raise exception 'Administrator access required' using errcode = '42501';
   end if;
-  delete from public.fortune_spins;
+  delete from public.fortune_spins where id is not null;
   get diagnostics deleted_count = row_count;
   return deleted_count;
 end;
