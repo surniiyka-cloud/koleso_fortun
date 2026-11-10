@@ -198,7 +198,7 @@ function renderCatalog(){
 async function loadPrizes(){
  if(!db)return;
  const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;prizes=data||[];draw();renderCatalog();if(!prizes.lengthtoast('В базе нет призов. Добавь их через админ-панель.');
+ if(error)throw error;prizes=data||[];draw();renderCatalog();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
 }
 async function loadHistory(){
  if(!db||!logged)return;
