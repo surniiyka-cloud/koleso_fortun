@@ -118,7 +118,7 @@ async function spin(){
 }
 $('spin').onclick=spin;$('reroll').onclick=()=>{closeReward();spin()};
 $('openAdmin').onclick=async()=>{if(!db){toast('Supabase ещё не настроен — смотри README в GitHub');return}
- if(logged){await refreshAdmin();show('adminOverlay')}else{$('loginError').textContent='';show('loginOverlay');$('adminPassword').focus()}};
+ if(logged){await refreshAdmin();show('adminOverlay')}else{$('loginError').textContent='';$('adminPassword').value='';show('loginOverlay');requestAnimationFrame(()=>{$('adminPassword').value='';$('adminPassword').focus()})}};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>hide(b.dataset.close));
 document.querySelectorAll('.overlay').forEach(el=>el.onclick=e=>{if(e.target===el)hide(el.id)});
 async function checkAdmin(){
@@ -214,6 +214,6 @@ $('clearHistory').onclick=async()=>{
  }catch(e){toast('Ошибка: '+errorMessage(e)+'. Проверь supabase/clear_history.sql')}
  finally{btn.disabled=false}
 };
-window.addEventListener('resize',draw);draw();
+window.addEventListener('resize',draw);window.addEventListener('pageshow',()=>{$('adminPassword').value=''});$('adminPassword').value='';draw();
 (async()=>{if(!db){$('spin').disabled=true;$('spin').textContent='Ожидание подключения Supabase';toast('Нужно настроить Supabase URL и publishable key в supabase-config.js');return}
  try{await loadPrizes();await checkAdmin()}catch(e){toast('Ошибка подключения: '+errorMessage(e))}})();
