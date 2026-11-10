@@ -169,11 +169,61 @@ td{color:#385448}
  .fields input{font-size:15px;padding:17px}
  .entry-card .primary{font-size:15px;padding:19px}
 }
+
+/* Prize celebration modal */
+body.reward-open{overflow:hidden}
+.reward-overlay{position:fixed;inset:0;z-index:12;display:grid;place-items:center;background:rgba(8,28,20,.76);backdrop-filter:blur(10px);padding:18px;overflow-y:auto}
+.reward-modal{position:relative;width:min(100%,600px);max-height:min(94vh,820px);overflow:auto;isolation:isolate;border:1px solid rgba(255,255,255,.88);border-radius:32px;background:radial-gradient(circle at 20% 0%,#fff9db,transparent 48%),linear-gradient(150deg,#fffdf6,#e8f4e3);box-shadow:0 30px 100px #071911a6,0 0 0 7px #ffffff1c;text-align:center;animation:reward-appear .48s cubic-bezier(.2,.9,.3,1.1)}
+.reward-modal:before{content:'';position:absolute;top:-140px;right:-110px;width:350px;height:350px;border:2px solid #b1d9bb66;border-radius:50%;box-shadow:0 0 0 35px #b1d9bb22,0 0 0 78px #b1d9bb18;pointer-events:none}
+.reward-content{position:relative;z-index:2;padding:48px 54px 43px}
+.reward-close{position:absolute;z-index:3;right:20px;top:18px;width:39px;height:39px;border-radius:50%;background:#ffffffd9;border:1px solid #d4e8d5;font-size:27px;color:#325b3f;line-height:1}
+.reward-close:hover{background:#e1f3e5}
+.reward-icon{width:100px;height:100px;margin:0 auto 22px;display:grid;place-items:center;background:linear-gradient(145deg,#d9f6ca,#91d99f);border:7px solid #fffdf6;border-radius:30px;box-shadow:0 13px 30px #4d916a45;font-size:50px;transform:rotate(-6deg)}
+.reward-eyebrow{display:inline-flex;align-items:center;justify-content:center;color:#33815b;background:#dfefd9;border:1px solid #c9e6cc;border-radius:30px;padding:8px 16px;letter-spacing:.19em}
+.reward-modal h2{font-family:Unbounded,Manrope,sans-serif;color:#173e2c;font-size:clamp(26px,4vw,37px);letter-spacing:-.055em;line-height:1.25;margin:20px 0 12px;overflow-wrap:anywhere}
+.reward-lead{font-size:16px;font-weight:800;color:#2c6d48;line-height:1.55;margin:0 auto 23px;max-width:440px}
+.reward-benefit{padding:22px 25px;background:#fffefbf5;border:1px solid #d6e7d5;border-radius:18px;text-align:left;box-shadow:0 7px 24px #345a3420}
+.reward-benefit-label{display:block;font-size:10px;letter-spacing:.19em;color:#d56d3b;font-weight:800;margin-bottom:10px}
+.reward-benefit p{font-size:15px;line-height:1.8;color:#315843;margin:0;font-weight:600}
+.reward-footnote{color:#7f9483;font-size:12px;line-height:1.65;margin:20px 0 0}
+.reward-modal .primary{max-width:360px;margin-top:23px;padding:18px}
+.reward-done{width:min(100%,320px);margin-top:24px;padding:15px 18px;border-radius:12px;border:1px solid #c9dccb;background:#e4f0df;color:#22583d;font-weight:800;font-size:13px}
+.reward-done:hover{background:#d1e9d0}
+.reward-burst{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.reward-burst span{position:absolute;color:#ec8a56;font-size:28px;animation:reward-spark 3.6s ease-in-out infinite alternate}
+.reward-burst span:nth-child(1){top:17%;left:10%}.reward-burst span:nth-child(2){top:32%;right:8%;color:#61a579;font-size:37px;animation-delay:.4s}.reward-burst span:nth-child(3){top:54%;left:5%;animation-delay:.8s}.reward-burst span:nth-child(4){top:13%;right:20%;font-size:11px;color:#eabb5c;animation-delay:1s}.reward-burst span:nth-child(5){bottom:17%;right:5%;color:#8ccda1;animation-delay:1.4s}.reward-burst span:nth-child(6){bottom:13%;left:11%;animation-delay:1.8s}
+.reward-modal.warning{background:linear-gradient(145deg,#fff2e5,#fffbf4)}
+.reward-modal.warning .reward-icon{background:linear-gradient(145deg,#ffdab3,#f3a77d)}
+.reward-modal.warning .reward-lead{color:#a75332}
+.reward-modal.warning .reward-benefit{border-color:#f2d8c6}
+.reward-modal.warning .reward-benefit-label{color:#b75e3e}
+.reward-modal.warning .reward-eyebrow{background:#ffe6d6;color:#b55d3d;border-color:#f7c9af}
+.reward-modal.warning .reward-done{display:none}
+@keyframes reward-appear{from{opacity:0;transform:translateY(26px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes reward-spark{from{transform:translateY(0) rotate(-15deg) scale(.9);opacity:.6}to{transform:translateY(-12px) rotate(20deg) scale(1.15);opacity:1}}
+@media(max-width:600px){.reward-overlay{padding:10px}.reward-modal{border-radius:22px}.reward-content{padding:47px 24px 28px}.reward-icon{width:82px;height:82px;font-size:39px;margin-bottom:16px}.reward-modal h2{font-size:clamp(23px,7vw,30px)}.reward-lead{font-size:14px}.reward-benefit{padding:18px}.reward-benefit p{font-size:13px}.reward-footnote{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.reward-modal,.reward-burst span{animation:none!important}}
 </style></head><body>
 <div class="shell"><header class="head"><div class="logo"><div class="mark">Т</div><div><strong>ТИАН-ТРЕЙД</strong><small>ПАРТНЁР УСПЕШНЫХ</small></div></div><button class="ghost" id="openAdmin">⚙ Администратор</button></header>
 <section class="hero"><span class="tag">Подарки, которые хочется выиграть</span><h1>Колесо <span>возможностей</span></h1><p>Немного удачи, приятные привилегии и один счастливый поворот. Твой подарок уже ждёт.</p></section>
-<main class="layout"><div class="wheelbox"><div class="wheel-decor">THE LUCKY SPIN <span>✳</span> ТИАН-ТРЕЙД</div><div class="ring"><div class="pointer"></div><canvas id="wheel"></canvas><div class="cap">ТИАН</div></div><p class="wheel-caption">Нажми «Крутить колесо» — и доверься удаче</p></div><div class="side"><section class="card entry-card"><span class="tag">Твой момент удачи / 01</span><h2 style="margin-top:10px">Попробуй свою удачу</h2><p>Введи имя и фамилию, запусти колесо и узнай, какой бонус приготовила для тебя команда ТИАН-Трейд.</p><div class="fields"><input id="first" maxlength="60" placeholder="Имя" autocomplete="given-name"><input id="last" maxlength="60" placeholder="Фамилия" autocomplete="family-name"></div><button class="primary" id="spin">Крутить колесо ✦</button><div class="subtle">Один подарок на имя и фамилию. Антикарточка даёт повторную попытку.</div></section><section class="card result hidden" id="result"><span class="tag" id="resultTag"></span><h2 id="resultTitle"></h2><p id="resultText"></p><button class="primary hidden" id="reroll">Крутить ещё раз ↻</button></section></div></main>
+<main class="layout"><div class="wheelbox"><div class="wheel-decor">THE LUCKY SPIN <span>✳</span> ТИАН-ТРЕЙД</div><div class="ring"><div class="pointer"></div><canvas id="wheel"></canvas><div class="cap">ТИАН</div></div><p class="wheel-caption">Нажми «Крутить колесо» — и доверься удаче</p></div><div class="side"><section class="card entry-card"><span class="tag">Твой момент удачи / 01</span><h2 style="margin-top:10px">Попробуй свою удачу</h2><p>Введи имя и фамилию, запусти колесо и узнай, какой бонус приготовила для тебя команда ТИАН-Трейд.</p><div class="fields"><input id="first" maxlength="60" placeholder="Имя" autocomplete="given-name"><input id="last" maxlength="60" placeholder="Фамилия" autocomplete="family-name"></div><button class="primary" id="spin">Крутить колесо ✦</button><div class="subtle">Один подарок на имя и фамилию. Антикарточка даёт повторную попытку.</div></section></div></main>
 <footer class="footer"><span>© ТИАН-ТРЕЙД · Колесо возможностей</span><span>Сделано для тех, кто делает больше</span></footer></div>
+<div class="reward-overlay hidden" id="rewardOverlay" role="presentation">
+ <section class="reward-modal" id="result" role="dialog" aria-modal="true" aria-labelledby="resultTitle" aria-describedby="resultText" tabindex="-1">
+  <button class="reward-close" id="rewardClose" type="button" aria-label="Закрыть окно">×</button>
+  <div class="reward-burst" aria-hidden="true"><span>✦</span><span>✳</span><span>✦</span><span>●</span><span>✳</span><span>✦</span></div>
+  <div class="reward-content">
+   <div class="reward-icon" id="rewardIcon" aria-hidden="true">🎁</div>
+   <span class="tag reward-eyebrow" id="resultTag"></span>
+   <h2 id="resultTitle"></h2>
+   <p class="reward-lead" id="rewardLead"></p>
+   <div class="reward-benefit" id="rewardBenefit"><span class="reward-benefit-label">ТВОЯ ПРИВИЛЕГИЯ</span><p id="resultText"></p></div>
+   <p class="reward-footnote" id="rewardFootnote">Покажи результат организатору, чтобы воспользоваться подарком.</p>
+   <button class="primary hidden" id="reroll">Крутить ещё раз ↻</button>
+   <button class="reward-done" id="rewardDone" type="button">Здорово! Спасибо ✦</button>
+  </div>
+ </section>
+</div>
 <div class="overlay hidden" id="loginOverlay"><section class="modal" style="max-width:420px"><div class="modalhead"><h2>Вход администратора</h2><button class="close" data-close="loginOverlay">×</button></div><div class="pad"><p style="color:var(--muted);font-size:13px">Введите пароль администратора.</p><form id="loginForm"><input class="input" id="adminPassword" type="password" required autocomplete="current-password" placeholder="Пароль"><button class="primary" id="loginButton" type="submit">Войти</button><p id="loginError" aria-live="polite"></p></form></div></section></div>
 <div class="overlay hidden" id="adminOverlay"><section class="modal"><div class="modalhead"><div><span class="tag">CONTROL CENTER</span><h2>Панель администратора</h2></div><button class="close" data-close="adminOverlay">×</button></div><div class="pad"><div class="tools"><button class="ghost" id="exportCsv">Экспорт CSV</button><button class="ghost" id="exportJson">Резервная копия</button><button class="ghost" id="importBtn">Импорт JSON</button><button class="ghost" id="clearHistory">Очистить историю</button><button class="ghost" id="logout">Выйти</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><div class="adminGrid"><section><h3>Призы <span id="prizeCount"></span></h3><div class="list" id="prizeList"></div><div class="tools"><input class="input" id="newTitle" placeholder="Название нового приза" maxlength="120"><button class="ghost" id="addPrize">+ Добавить сектор</button></div></section><section><h3>История розыгрыша</h3><div class="stats"><div class="stat"><b id="statPlayers">0</b><small>Участников</small></div><div class="stat"><b id="statWins">0</b><small>Подарков</small></div><div class="stat"><b id="statRerolls">0</b><small>Антикарточек</small></div></div><div class="history" id="history"></div></section></div><p class="note">Данные синхронизируются через Supabase. Доступ к управлению призами и истории ограничен серверными правилами доступа (RLS).</p></div></section></div>
 <div class="hidden" id="notice" role="status"></div>
@@ -228,10 +278,41 @@ async function loadHistory(){
  const {data,error}=await db.from('fortune_spins').select('id,full_name,prize_title,is_anti,created_at').order('created_at',{ascending:false}).limit(2000);
  if(error)throw error;history=data||[];
 }
-function result(tag,title,detail,warning=false){
- $('resultTag').textContent=tag;$('resultTitle').textContent=title;$('resultText').textContent=detail;
- $('result').classList.toggle('warning',warning);show('result');$('reroll').classList.toggle('hidden',!warning)
+const GIFT_STORIES={
+ 'антидедлайн':{icon:'⏳',lead:'Время теперь играет на твоей стороне!',description:'Получи дополнительные 24 часа на выполнение любой одной внутренней задачи. Спокойно согласуй перенос дедлайна и закончи работу без гонки со временем.'},
+ 'официальный высыпон':{icon:'😴',lead:'Утро без будильника? Теперь официально!',description:'Один раз приходи на работу на 1–2 часа позже обычного — без отработки. Выспись, выпей кофе и начни день в своём ритме.'},
+ 'право на тишину':{icon:'🔕',lead:'Никаких лишних уведомлений. Только твой фокус.',description:'Выбери один рабочий день без несрочных упоминаний в чатах и планёрок. Важные вопросы остаются, а всё остальное подождёт.'},
+ 'мерч-сюрприз':{icon:'🎁',lead:'Фирменный сюрприз уже ждёт!',description:'Тебе достаётся брендированный мерч ТИАН-Трейд на выбор. Выбирай то, что действительно хочется носить или использовать каждый день.'},
+ 'пятничная свобода':{icon:'🌴',lead:'Твои выходные начнутся раньше!',description:'В одну из пятниц уходи с работы на 2–3 часа раньше без отработки. Время на любимые дела, прогулку или просто заслуженный отдых.'},
+ 'абонемент на опоздания':{icon:'⌚',lead:'Небольшое опоздание больше не катастрофа.',description:'В течение одного месяца тебе простят три опоздания до 30 минут каждое. Используй, когда утро решит пойти не по плану.'},
+ 'день удалёнки':{icon:'🏡',lead:'Сегодня офис там, где удобно тебе!',description:'Выбирай один рабочий день и работай из дома без необходимости объяснять причину. Твои задачи остаются, а место работы выбираешь ты.'},
+ 'день удаленки без объяснения причин':{icon:'🏡',lead:'Сегодня офис там, где удобно тебе!',description:'Выбирай один рабочий день и работай из дома без необходимости объяснять причину. Твои задачи остаются, а место работы выбираешь ты.'},
+ 'личный сиеста-час':{icon:'☕',lead:'Час только для себя!',description:'Увеличь свой обеденный перерыв на целый час в любой выбранный день. Можно спокойно пообедать, прогуляться или решить личные дела.'},
+ 'именинный отгул':{icon:'🎂',lead:'День рождения заслуживает целого дня!',description:'Забирай дополнительный оплачиваемый выходной: в свой день рождения или в течение недели после него. Отмечай без рабочих забот.'},
+ 'индивидуальный менторинг':{icon:'🚀',lead:'Час больших идей и новых возможностей!',description:'Тебя ждёт личная часовая встреча с топ-менеджером или директором компании. Обсуди карьерные цели, задай вопросы или предложи свою идею.'},
+ 'день самообразования':{icon:'📚',lead:'Инвестируй целый день в себя!',description:'Один рабочий день можно посвятить профессиональному развитию: книгам, курсам и вебинарам вместо текущих задач.'},
+ 'официальный день самообразования':{icon:'📚',lead:'Инвестируй целый день в себя!',description:'Один рабочий день можно посвятить профессиональному развитию: книгам, курсам и вебинарам вместо текущих задач.'}
+};
+function showReward(tag,title,detail,warning=false){
+ const story=GIFT_STORIES[title.trim().toLocaleLowerCase('ru')];
+ $('resultTag').textContent=tag;
+ $('resultTitle').textContent=title;
+ $('rewardIcon').textContent=warning?'⚡':(story?.icon||'🎁');
+ $('rewardLead').textContent=warning?'Не переживай: без подарка мы тебя не оставим!':(story?.lead||'Поздравляем! Сегодня удача на твоей стороне!');
+ $('resultText').textContent=warning?detail:(story?.description||detail||'Твой персональный подарок от ТИАН-Трейд!');
+ $('rewardFootnote').textContent=warning?'Нажми кнопку ниже, чтобы получить свой настоящий подарок.':'Сохрани этот результат и покажи организатору, чтобы воспользоваться привилегией.';
+ $('result').classList.toggle('warning',warning);
+ $('reroll').classList.toggle('hidden',!warning);
+ $('rewardDone').classList.toggle('hidden',warning);
+ show('rewardOverlay');document.body.classList.add('reward-open');
+ $('result').focus();
 }
+function closeReward(){hide('rewardOverlay');document.body.classList.remove('reward-open')}
+$('rewardClose').onclick=closeReward;
+$('rewardDone').onclick=closeReward;
+$('rewardOverlay').onclick=e=>{if(e.target===$('rewardOverlay'))closeReward()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('rewardOverlay').classList.contains('hidden'))closeReward()});
+
 function animateTo(index,finished){
  let step=2*Math.PI/prizes.length,current=((angle%(2*Math.PI))+2*Math.PI)%(2*Math.PI),dest=((-index*step)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
  let delta=(dest-current+2*Math.PI)%(2*Math.PI),from=angle,to=from+12*Math.PI+delta,start=performance.now();
@@ -255,18 +336,18 @@ async function spin(){
   if(i<0){await loadPrizes()}
   const idx=prizes.findIndex(p=>p.id===win.prize_id);
   if(idx<0)throw Error('Получен приз, которого нет в актуальном списке. Обратись к администратору.');
-  $('spin').textContent='Колесо вращается…';hide('result');
+  $('spin').textContent='Колесо вращается…';closeReward();
   animateTo(idx,()=>{
    spinning=false;$('spin').disabled=false;$('reroll').disabled=false;
    if(win.is_anti){needsReroll=true;$('spin').textContent='Крутить ещё раз ↻';
-    result('⚡ СИСТЕМНАЯ ОШИБКА','Упс! Похоже, система дала сбой.','Но мы же не оставим тебя без подарка в день рождения? Крути ещё раз!',true)}
-   else{needsReroll=false;result('✦ ПОЗДРАВЛЯЕМ',win.prize_title,win.prize_description||'Твой подарок от ТИАН-Трейд!');
+    showReward('⚡ СИСТЕМНАЯ ОШИБКА','Упс! Похоже, система дала сбой.','Но мы же не оставим тебя без подарка в день рождения? Крути ещё раз!',true)}
+   else{needsReroll=false;showReward('✦ ПОЗДРАВЛЯЕМ',win.prize_title,win.prize_description||'Твой подарок от ТИАН-Трейд!');
     $('spin').disabled=true;$('spin').textContent='Подарок получен ✓'}
   });
   if(logged)await loadHistory().then(renderAdmin).catch(()=>{});
  }catch(err){spinning=false;$('spin').disabled=false;$('reroll').disabled=false;$('spin').textContent=needsReroll?'Крутить ещё раз ↻':'Крутить колесо ✦';toast(errorMessage(err))}
 }
-$('spin').onclick=spin;$('reroll').onclick=spin;
+$('spin').onclick=spin;$('reroll').onclick=()=>{closeReward();spin()};
 $('openAdmin').onclick=async()=>{if(!db){toast('Supabase ещё не настроен — смотри README в GitHub');return}
  if(logged){await refreshAdmin();show('adminOverlay')}else{$('loginError').textContent='';show('loginOverlay');$('adminPassword').focus()}};
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>hide(b.dataset.close));
