@@ -146,3 +146,16 @@ html,body{height:100%;overflow:hidden}
 .reward-modal:before{left:0;right:0;width:100%;box-sizing:border-box}
 .reward-content{min-width:0;overflow-wrap:anywhere}
 @media(max-width:600px){.reward-modal{max-height:calc(100dvh - 20px)}}
+
+/* Expanded prize editor with editable reward descriptions */
+.prize-editor{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:15px;border-radius:13px}
+.prize-fields{display:flex;flex-direction:column;gap:12px;min-width:0}
+.prize-label{display:flex;flex-direction:column;gap:6px;font-size:11px;color:#abc5b5;font-weight:700;letter-spacing:.025em}
+.prize-editor .prize-label input,.prize-editor textarea{width:100%;min-width:0;color:#f5f9f1;background:#101e19;border:1px solid #496454;border-radius:9px;padding:11px 12px;font:500 12px/1.6 Manrope,Arial,sans-serif;outline:none}
+.prize-editor textarea{resize:vertical;min-height:76px;max-height:220px}
+.prize-editor .prize-label input:focus,.prize-editor textarea:focus{border-color:#87d5a5;box-shadow:0 0 0 2px #87d5a51b}
+.prize-editor .prize-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.prize-editor .prize-actions span{margin-right:auto}
+.prize-editor .prize-save{padding:9px 15px;background:#244d35;border-color:#558e65;color:#d8f6da}
+.prize-editor .prize-save:disabled{opacity:.38}
+.prize-editor .delete{padding:9px 14px}
