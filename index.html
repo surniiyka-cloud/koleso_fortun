@@ -6,53 +6,141 @@
 </style></head><body>
 <div class="shell"><header class="head"><div class="logo"><div class="mark">Т</div><div><strong>ТИАН-ТРЕЙД</strong><small>ПАРТНЁР УСПЕШНЫХ</small></div></div><button class="ghost" id="openAdmin">⚙ Администратор</button></header>
 <section class="hero"><span class="tag">SPECIAL BIRTHDAY EDITION</span><h1>Колесо <span>возможностей</span></h1><p>Сегодня удача работает на тебя. Введи имя и фамилию — и забери свой подарок!</p></section>
-<main class="layout"><div class="wheelbox"><div class="ring"><div class="pointer"></div><canvas id="wheel"></canvas><div class="cap">ТИАН</div></div></div><div class="side"><section class="card"><span class="tag">01 / УЧАСТНИК</span><h2 style="margin-top:10px">Кому сегодня повезёт?</h2><p>Представься, чтобы мы сохранили твой выигрыш в истории розыгрыша.</p><div class="fields"><input id="first" maxlength="60" placeholder="Имя" autocomplete="given-name"><input id="last" maxlength="60" placeholder="Фамилия" autocomplete="family-name"></div><button class="primary" id="spin">Крутить колесо ✦</button><div class="subtle">Один подарок на участника. Антикарточка даёт повторную попытку.</div></section><section class="card result hidden" id="result"><span class="tag" id="resultTag"></span><h2 id="resultTitle"></h2><p id="resultText"></p><button class="primary hidden" id="reroll">Крутить ещё раз ↻</button></section></div></main>
+<main class="layout"><div class="wheelbox"><div class="ring"><div class="pointer"></div><canvas id="wheel"></canvas><div class="cap">ТИАН</div></div></div><div class="side"><section class="card"><span class="tag">01 / УЧАСТНИК</span><h2 style="margin-top:10px">Кому сегодня повезёт?</h2><p>Представься, чтобы твой результат сохранился в общей истории розыгрыша.</p><div class="fields"><input id="first" maxlength="60" placeholder="Имя" autocomplete="given-name"><input id="last" maxlength="60" placeholder="Фамилия" autocomplete="family-name"></div><button class="primary" id="spin">Крутить колесо ✦</button><div class="subtle">Один подарок на имя и фамилию. Антикарточка даёт повторную попытку.</div></section><section class="card result hidden" id="result"><span class="tag" id="resultTag"></span><h2 id="resultTitle"></h2><p id="resultText"></p><button class="primary hidden" id="reroll">Крутить ещё раз ↻</button></section></div></main>
 <div class="info"><div><b>✦ Подарки с характером</b><p>От дополнительного выходного до права выспаться.</p></div><div><b>↻ Второй шанс</b><p>Выпала антикарточка? Колесо предложит повторную попытку.</p></div><div><b>✓ Всё по-честному</b><p>Результат случайный и фиксируется в истории.</p></div></div><footer class="footer"><span>© ТИАН-ТРЕЙД · Колесо возможностей</span><span>Сделано для тех, кто делает больше</span></footer></div>
-<div class="overlay hidden" id="loginOverlay"><section class="modal" style="max-width:420px"><div class="modalhead"><h2>Вход администратора</h2><button class="close" data-close="loginOverlay">×</button></div><div class="pad"><p style="color:var(--muted);font-size:13px">Введите пароль для доступа к управлению призами и истории.</p><form id="loginForm"><input class="input" id="adminPassword" type="password" required autocomplete="current-password" placeholder="Пароль"><button class="primary" id="loginButton" type="submit">Войти</button><p id="loginError" aria-live="polite"></p></form></div></section></div>
-<div class="overlay hidden" id="adminOverlay"><section class="modal"><div class="modalhead"><div><span class="tag">CONTROL CENTER</span><h2>Панель администратора</h2></div><button class="close" data-close="adminOverlay">×</button></div><div class="pad"><div class="tools"><button class="ghost" id="exportCsv">Экспорт CSV</button><button class="ghost" id="exportJson">Резервная копия</button><button class="ghost" id="importBtn">Импорт JSON</button><button class="ghost" id="clearHistory">Очистить историю</button><button class="ghost" id="logout">Выйти</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><div class="adminGrid"><section><h3>Призы <span id="prizeCount"></span></h3><div class="list" id="prizeList"></div><div class="tools"><input class="input" id="newTitle" placeholder="Название нового приза" maxlength="120"><button class="ghost" id="addPrize">+ Добавить сектор</button></div></section><section><h3>История розыгрыша</h3><div class="stats"><div class="stat"><b id="statPlayers">0</b><small>Участников</small></div><div class="stat"><b id="statWins">0</b><small>Подарков</small></div><div class="stat"><b id="statRerolls">0</b><small>Антикарточек</small></div></div><div class="history" id="history"></div></section></div><p class="note">Демонстрационная версия: призы и история хранятся только в этом браузере. Пароль ограничивает доступ к интерфейсу, но не заменяет серверную авторизацию. Для единой истории сотрудников с разных устройств нужен сервер и база данных.</p></div></section></div>
+<div class="overlay hidden" id="loginOverlay"><section class="modal" style="max-width:420px"><div class="modalhead"><h2>Вход администратора</h2><button class="close" data-close="loginOverlay">×</button></div><div class="pad"><p style="color:var(--muted);font-size:13px">Введите пароль для доступа к управлению призами и истории.</p><form id="loginForm"><input class="input" id="adminEmail" type="email" required autocomplete="username" placeholder="Email администратора" style="margin-bottom:10px"><input class="input" id="adminPassword" type="password" required autocomplete="current-password" placeholder="Пароль"><button class="primary" id="loginButton" type="submit">Войти</button><p id="loginError" aria-live="polite"></p></form></div></section></div>
+<div class="overlay hidden" id="adminOverlay"><section class="modal"><div class="modalhead"><div><span class="tag">CONTROL CENTER</span><h2>Панель администратора</h2></div><button class="close" data-close="adminOverlay">×</button></div><div class="pad"><div class="tools"><button class="ghost" id="exportCsv">Экспорт CSV</button><button class="ghost" id="exportJson">Резервная копия</button><button class="ghost" id="importBtn">Импорт JSON</button><button class="ghost" id="clearHistory">Очистить историю</button><button class="ghost" id="logout">Выйти</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><div class="adminGrid"><section><h3>Призы <span id="prizeCount"></span></h3><div class="list" id="prizeList"></div><div class="tools"><input class="input" id="newTitle" placeholder="Название нового приза" maxlength="120"><button class="ghost" id="addPrize">+ Добавить сектор</button></div></section><section><h3>История розыгрыша</h3><div class="stats"><div class="stat"><b id="statPlayers">0</b><small>Участников</small></div><div class="stat"><b id="statWins">0</b><small>Подарков</small></div><div class="stat"><b id="statRerolls">0</b><small>Антикарточек</small></div></div><div class="history" id="history"></div></section></div><p class="note">Данные синхронизируются через Supabase. Доступ к управлению призами и истории ограничен серверными правилами доступа (RLS).</p></div></section></div>
 <div class="hidden" id="notice" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
 <script>
 'use strict';
-const INITIAL=[
-['Антидедлайн','Продли дедлайн внутренней задачи на 24 часа.'],
-['Официальный высыпон','Опоздай на работу на 1–2 часа без последствий.'],
-['Право на тишину','День без несрочных тегов и планёрок.'],
-['Мерч-сюрприз','Фирменный мерч на выбор.'],
-['Пятничная свобода','Уходи в пятницу на 2–3 часа раньше без отработки.'],
-['Абонемент на опоздания','Три опоздания до 30 минут в течение месяца.'],
-['День удалёнки','Работай из дома один день без объяснения причин.'],
-['Личный сиеста-час','Дополнительный час обеденного перерыва.'],
-['Именинный отгул','Дополнительный оплачиваемый выходной на день рождения или в течение недели.'],
-['Индивидуальный менторинг','Час общения с топ-менеджером или директором.'],
-['День самообразования','День для профессионального обучения без текущих задач.'],
-['Антикарточка','Выйти в субботу на работу до 12:00.',true]
-].map(([title,desc,anti],i)=>({id:'p'+i,title,desc,anti:!!anti}));
-const KEY='tian_fortune_v1',AUTH='tian_admin_session_v1',$=id=>document.getElementById(id);
-const SALT='c4b71fce22b07673ad0be46b43b313cb',HASH='dbf6a1382c73b232689405a944c9f93128482eadcd7d02c218bc557708cd266c';
-let state;try{state=JSON.parse(localStorage.getItem(KEY));if(!state||!Array.isArray(state.prizes)||!Array.isArray(state.history))throw Error()}catch(e){state={prizes:INITIAL,history:[]}}
-let angle=0,spinning=false,reroll=false,person='',logged=sessionStorage.getItem(AUTH)==='ok';
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function show(id){$(id).classList.remove('hidden')}function hide(id){$(id).classList.add('hidden')}
-function toast(s){$('notice').textContent=s;show('notice');clearTimeout(toast.t);toast.t=setTimeout(()=>hide('notice'),3000)}
-function random(n){const a=new Uint32Array(1);crypto.getRandomValues(a);return Math.floor(a[0]/4294967296*n)}
-function hex(bytes){return [...bytes].map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function verifyPassword(password){const raw=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveBits']);const salt=Uint8Array.from(SALT.match(/../g).map(x=>parseInt(x,16)));const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:210000,hash:'SHA-256'},raw,256);return hex(new Uint8Array(bits))===HASH}
+const $=id=>document.getElementById(id);
+const configured=typeof window.FORTUNE_SUPABASE_URL==='string'&&/^https:\/\/[-a-z0-9]+\.supabase\.co\/?$/.test(window.FORTUNE_SUPABASE_URL)&&typeof window.FORTUNE_SUPABASE_KEY==='string'&&window.FORTUNE_SUPABASE_KEY.length>15;
+const db=configured&&window.supabase?window.supabase.createClient(window.FORTUNE_SUPABASE_URL,window.FORTUNE_SUPABASE_KEY):null;
+let prizes=[],history=[],angle=0,spinning=false,person='',needsReroll=false,logged=false,adminUser=null;
 const cv=$('wheel'),ctx=cv.getContext('2d');
-function draw(){let size=Math.max(220,Math.round(cv.getBoundingClientRect().width));const d=Math.min(window.devicePixelRatio||1,2);cv.width=size*d;cv.height=size*d;ctx.setTransform(d,0,0,d,0,0);const n=state.prizes.length,c=size/2,R=c-2,step=2*Math.PI/n;ctx.clearRect(0,0,size,size);ctx.save();ctx.translate(c,c);ctx.rotate(angle);
-state.prizes.forEach((p,i)=>{let a=-Math.PI/2-step/2+i*step;ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,a,a+step);ctx.closePath();ctx.fillStyle=p.anti?'#87513d':['#1c7558','#e5744b','#28654c','#be5d40'][i%4];ctx.fill();ctx.strokeStyle='#e6dfc480';ctx.lineWidth=1.2;ctx.stroke();ctx.save();ctx.rotate(-Math.PI/2+i*step);ctx.translate(R*.63,0);ctx.rotate(Math.PI/2);ctx.fillStyle='#fffaf2';let fs=Math.max(8,Math.min(14,size*.024,340/n));ctx.font='800 '+fs+'px Manrope,Arial';ctx.textAlign='center';ctx.textBaseline='middle';const max=n>15?12:17;let lines=[],line='';for(const word of p.title.split(/\s+/)){if((line+' '+word).trim().length>max&&line){lines.push(line);line=word}else line=(line+' '+word).trim()}if(line)lines.push(line);if(lines.length>3)lines=[lines[0],lines[1],lines.slice(2).join(' ').slice(0,max-1)+'…'];lines.slice(0,3).forEach((t,j)=>ctx.fillText(t.length>max?t.slice(0,max-1)+'…':t,0,(j-(Math.min(3,lines.length)-1)/2)*fs*1.16));ctx.restore()});ctx.beginPath();ctx.arc(0,0,R,0,2*Math.PI);ctx.strokeStyle='#e4f5e6';ctx.lineWidth=2;ctx.stroke();ctx.restore()}
-function completed(n){return state.history.some(x=>x.name.toLocaleLowerCase('ru')===n.toLocaleLowerCase('ru')&&!x.anti)}
-function result(tag,title,detail,warning=false){$('resultTag').textContent=tag;$('resultTitle').textContent=title;$('resultText').textContent=detail;$('result').classList.toggle('warning',warning);show('result');$('reroll').classList.toggle('hidden',!warning)}
-function spin(){if(spinning)return;if(!reroll){let f=$('first').value.trim().replace(/\s+/g,' '),l=$('last').value.trim().replace(/\s+/g,' ');if(!f||!l){toast('Укажи имя и фамилию');return}person=f+' '+l;if(completed(person)){result('✓ УЖЕ УЧАСТВОВАЛИ','Подарок уже определён','Ваш результат сохранён в истории розыгрыша.');return}}const options=state.prizes.map((p,i)=>i).filter(i=>!reroll||!state.prizes[i].anti);if(!options.length){toast('Нет доступных призов');return}const index=options[random(options.length)],p=state.prizes[index],step=2*Math.PI/state.prizes.length;spinning=true;$('spin').disabled=true;$('reroll').disabled=true;$('spin').textContent='Колесо вращается…';hide('result');const current=((angle%(2*Math.PI))+2*Math.PI)%(2*Math.PI),dest=((-index*step)%(2*Math.PI)+2*Math.PI)%(2*Math.PI),delta=(dest-current+2*Math.PI)%(2*Math.PI),from=angle,to=from+12*Math.PI+delta,start=performance.now();
-function animate(t){let q=Math.min((t-start)/5500,1);angle=from+(to-from)*(1-(1-q)**5);draw();if(q<1){requestAnimationFrame(animate);return}spinning=false;$('spin').disabled=false;$('reroll').disabled=false;$('spin').textContent='Крутить колесо ✦';state.history.unshift({id:crypto.randomUUID?crypto.randomUUID():Date.now()+'',name:person,prize:p.title,anti:p.anti,at:new Date().toISOString()});save();renderAdmin();if(p.anti){reroll=true;result('⚡ СИСТЕМНАЯ ОШИБКА','Упс! Похоже, система дала сбой.','Но мы же не оставим тебя без подарка в день рождения? Крути ещё раз!',true)}else{reroll=false;result('✦ ПОЗДРАВЛЯЕМ',p.title,p.desc||'Твой подарок от ТИАН-Трейд!');$('spin').disabled=true;$('spin').textContent='Подарок получен ✓'}}requestAnimationFrame(animate)}
+function show(id){$(id).classList.remove('hidden')}function hide(id){$(id).classList.add('hidden')}
+function toast(msg){$('notice').textContent=msg;show('notice');clearTimeout(toast.t);toast.t=setTimeout(()=>hide('notice'),5000)}
+function errorMessage(e){return e&&e.message?e.message:'Ошибка сети или базы данных'}
+function nameOf(p){return p.title}
+function draw(){
+ let size=Math.max(220,Math.round(cv.getBoundingClientRect().width)),d=Math.min(devicePixelRatio||1,2);
+ cv.width=size*d;cv.height=size*d;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,size,size);
+ const n=prizes.length,c=size/2,R=c-2;if(!n){ctx.fillStyle='#a9b9ad';ctx.font='700 16px Manrope,Arial';ctx.textAlign='center';ctx.fillText('Загрузка призов…',c,c*.65);return}
+ let step=2*Math.PI/n;ctx.save();ctx.translate(c,c);ctx.rotate(angle);
+ prizes.forEach((p,i)=>{let a=-Math.PI/2-step/2+i*step;ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,a,a+step);ctx.closePath();
+ ctx.fillStyle=p.is_anti?'#87513d':['#1c7558','#e5744b','#28654c','#be5d40'][i%4];ctx.fill();ctx.strokeStyle='#e6dfc480';ctx.lineWidth=1.2;ctx.stroke();
+ ctx.save();ctx.rotate(-Math.PI/2+i*step);ctx.translate(R*.63,0);ctx.rotate(Math.PI/2);
+ ctx.fillStyle='#fffaf2';let fs=Math.max(8,Math.min(14,size*.024,340/n));ctx.font='800 '+fs+'px Manrope,Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+ const max=n>15?12:17;let lines=[],line='';for(const word of p.title.split(/\s+/)){if((line+' '+word).trim().length>max&&line){lines.push(line);line=word}else line=(line+' '+word).trim()}if(line)lines.push(line);
+ if(lines.length>3)lines=[lines[0],lines[1],lines.slice(2).join(' ').slice(0,max-1)+'…'];lines.slice(0,3).forEach((t,j)=>ctx.fillText(t.length>max?t.slice(0,max-1)+'…':t,0,(j-(Math.min(3,lines.length)-1)/2)*fs*1.16));ctx.restore()});
+ ctx.beginPath();ctx.arc(0,0,R,0,2*Math.PI);ctx.strokeStyle='#e4f5e6';ctx.lineWidth=2;ctx.stroke();ctx.restore()
+}
+async function loadPrizes(){
+ if(!db)return;
+ const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
+ if(error)throw error;prizes=data||[];draw();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
+}
+async function loadHistory(){
+ if(!db||!logged)return;
+ const {data,error}=await db.from('fortune_spins').select('id,full_name,prize_title,is_anti,created_at').order('created_at',{ascending:false}).limit(2000);
+ if(error)throw error;history=data||[];
+}
+function result(tag,title,detail,warning=false){
+ $('resultTag').textContent=tag;$('resultTitle').textContent=title;$('resultText').textContent=detail;
+ $('result').classList.toggle('warning',warning);show('result');$('reroll').classList.toggle('hidden',!warning)
+}
+function animateTo(index,finished){
+ let step=2*Math.PI/prizes.length,current=((angle%(2*Math.PI))+2*Math.PI)%(2*Math.PI),dest=((-index*step)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+ let delta=(dest-current+2*Math.PI)%(2*Math.PI),from=angle,to=from+12*Math.PI+delta,start=performance.now();
+ function frame(t){let q=Math.min((t-start)/5500,1);angle=from+(to-from)*(1-(1-q)**5);draw();if(q<1){requestAnimationFrame(frame);return}finished()}
+ requestAnimationFrame(frame)
+}
+async function spin(){
+ if(spinning||!db)return;
+ const f=$('first').value.trim().replace(/\s+/g,' '),l=$('last').value.trim().replace(/\s+/g,' ');
+ if(!f||!l){toast('Укажи имя и фамилию');return}
+ const next=f+' '+l;
+ if(needsReroll&&next.toLocaleLowerCase('ru')!==person.toLocaleLowerCase('ru')){toast('Повторное вращение доступно только тому же участнику');return}
+ if(!prizes.length){toast('Призы ещё не загружены');return}
+ spinning=true;$('spin').disabled=true;$('reroll').disabled=true;$('spin').textContent='Определяем подарок…';
+ try{
+  const {data,error}=await db.rpc('fortune_draw',{p_first:f,p_last:l});if(error)throw error;
+  const win=Array.isArray(data)?data[0]:data;
+  if(!win)throw Error('Сервер не вернул результат.');
+  person=next;
+  const i=prizes.findIndex(p=>p.id===win.prize_id);
+  if(i<0){await loadPrizes()}
+  const idx=prizes.findIndex(p=>p.id===win.prize_id);
+  if(idx<0)throw Error('Получен приз, которого нет в актуальном списке. Обратись к администратору.');
+  $('spin').textContent='Колесо вращается…';hide('result');
+  animateTo(idx,()=>{
+   spinning=false;$('spin').disabled=false;$('reroll').disabled=false;
+   if(win.is_anti){needsReroll=true;$('spin').textContent='Крутить ещё раз ↻';
+    result('⚡ СИСТЕМНАЯ ОШИБКА','Упс! Похоже, система дала сбой.','Но мы же не оставим тебя без подарка в день рождения? Крути ещё раз!',true)}
+   else{needsReroll=false;result('✦ ПОЗДРАВЛЯЕМ',win.prize_title,win.prize_description||'Твой подарок от ТИАН-Трейд!');
+    $('spin').disabled=true;$('spin').textContent='Подарок получен ✓'}
+  });
+  if(logged)await loadHistory().then(renderAdmin).catch(()=>{});
+ }catch(err){spinning=false;$('spin').disabled=false;$('reroll').disabled=false;$('spin').textContent=needsReroll?'Крутить ещё раз ↻':'Крутить колесо ✦';toast(errorMessage(err))}
+}
 $('spin').onclick=spin;$('reroll').onclick=spin;
-$('openAdmin').onclick=()=>{if(logged){renderAdmin();show('adminOverlay')}else{show('loginOverlay');$('adminPassword').focus()}};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>hide(b.dataset.close));document.querySelectorAll('.overlay').forEach(el=>el.onclick=e=>{if(e.target===el)hide(el.id)});
-$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginError').textContent='';$('loginButton').disabled=true;try{if(await verifyPassword($('adminPassword').value)){logged=true;sessionStorage.setItem(AUTH,'ok');$('adminPassword').value='';hide('loginOverlay');renderAdmin();show('adminOverlay')}else{$('loginError').textContent='Неверный пароль'}}catch(err){$('loginError').textContent='Ошибка проверки пароля. Откройте сайт по HTTPS.'}finally{$('loginButton').disabled=false}};
-$('logout').onclick=()=>{logged=false;sessionStorage.removeItem(AUTH);hide('adminOverlay');toast('Вы вышли из панели администратора')};
-function renderAdmin(){if(!logged)return;const root=$('prizeList');root.replaceChildren();$('prizeCount').textContent='('+state.prizes.length+')';state.prizes.forEach((p,i)=>{let row=document.createElement('div');row.className='prize';let inp=document.createElement('input');inp.value=p.title;inp.maxLength=120;inp.setAttribute('aria-label','Название приза');inp.onchange=()=>{const v=inp.value.trim();if(!v){inp.value=p.title;return}p.title=v;save();draw()};row.append(inp);if(p.anti){let s=document.createElement('span');s.textContent='АНТИ';row.append(s)}let del=document.createElement('button');del.className='delete';del.textContent='×';del.title='Удалить сектор';del.disabled=state.prizes.length<=2;del.onclick=()=>{if(spinning||!confirm('Удалить сектор «'+p.title+'»?'))return;state.prizes.splice(i,1);save();renderAdmin();draw()};row.append(del);root.append(row)});const h=state.history;$('statPlayers').textContent=new Set(h.map(x=>x.name.toLowerCase())).size;$('statWins').textContent=h.filter(x=>!x.anti).length;$('statRerolls').textContent=h.filter(x=>x.anti).length;const area=$('history');area.replaceChildren();if(!h.length){area.textContent='История пока пуста';area.style.padding='16px';return}area.style.padding='0';let table=document.createElement('table'),thead=document.createElement('thead'),header=document.createElement('tr');['Дата','Участник','Результат'].forEach(s=>{let th=document.createElement('th');th.textContent=s;header.append(th)});thead.append(header);table.append(thead);let body=document.createElement('tbody');h.forEach(x=>{let tr=document.createElement('tr');[new Date(x.at).toLocaleString('ru-RU'),x.name,x.prize].forEach(s=>{let td=document.createElement('td');td.textContent=s;tr.append(td)});body.append(tr)});table.append(body);area.append(table)}
-$('addPrize').onclick=()=>{if(!logged||spinning)return;let title=$('newTitle').value.trim();if(!title){toast('Введите название');return}if(state.prizes.length>=30){toast('Максимум 30 секторов');return}state.prizes.push({id:'p'+Date.now(),title,desc:'Подарок от ТИАН-Трейд.',anti:false});$('newTitle').value='';save();renderAdmin();draw()};
+$('openAdmin').onclick=async()=>{if(!db){toast('Supabase ещё не настроен — смотри README в GitHub');return}
+ if(logged){await refreshAdmin();show('adminOverlay')}else{$('loginError').textContent='';show('loginOverlay');$('adminEmail').focus()}};
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>hide(b.dataset.close));
+document.querySelectorAll('.overlay').forEach(el=>el.onclick=e=>{if(e.target===el)hide(el.id)});
+async function checkAdmin(){
+ const {data:{user}}=await db.auth.getUser();
+ if(!user){logged=false;adminUser=null;return false}
+ const {data,error}=await db.rpc('fortune_is_admin');
+ logged=!error&&data===true;adminUser=logged?user:null;return logged
+}
+$('loginForm').onsubmit=async e=>{
+ e.preventDefault();$('loginError').textContent='';$('loginButton').disabled=true;
+ try{
+  const {error}=await db.auth.signInWithPassword({email:$('adminEmail').value.trim(),password:$('adminPassword').value});
+  if(error)throw error;
+  if(!await checkAdmin()){await db.auth.signOut();throw Error('У пользователя нет прав администратора. Добавь его в fortune_admins.')}
+  $('adminPassword').value='';hide('loginOverlay');await refreshAdmin();show('adminOverlay')
+ }catch(e){$('loginError').textContent=errorMessage(e)}finally{$('loginButton').disabled=false}
+};
+$('logout').onclick=async()=>{if(db)await db.auth.signOut();logged=false;adminUser=null;hide('adminOverlay');toast('Вы вышли из панели администратора')};
+async function refreshAdmin(){if(!logged)return;await Promise.all([loadPrizes(),loadHistory()]);renderAdmin()}
+function renderAdmin(){
+ if(!logged)return;const root=$('prizeList');root.replaceChildren();$('prizeCount').textContent='('+prizes.length+')';
+ prizes.forEach((p,i)=>{
+  let row=document.createElement('div');row.className='prize';let inp=document.createElement('input');
+  inp.value=p.title;inp.maxLength=120;inp.setAttribute('aria-label','Название приза');
+  inp.onchange=async()=>{const title=inp.value.trim();if(!title){inp.value=p.title;return}
+   const {error}=await db.from('fortune_prizes').update({title}).eq('id',p.id);if(error){inp.value=p.title;toast(errorMessage(error))}else{p.title=title;draw()}};
+  row.append(inp);if(p.is_anti){let s=document.createElement('span');s.textContent='АНТИ';row.append(s)}
+  let del=document.createElement('button');del.className='delete';del.textContent='×';del.title='Удалить сектор';del.disabled=prizes.length<=2;
+  del.onclick=async()=>{if(spinning||!confirm('Удалить сектор «'+p.title+'»?'))return;
+   const {error}=await db.from('fortune_prizes').delete().eq('id',p.id);if(error)toast(errorMessage(error));else await refreshAdmin()};
+  row.append(del);root.append(row)
+ });
+ const h=history;$('statPlayers').textContent=new Set(h.map(x=>x.full_name.toLowerCase())).size;
+ $('statWins').textContent=h.filter(x=>!x.is_anti).length;$('statRerolls').textContent=h.filter(x=>x.is_anti).length;
+ const area=$('history');area.replaceChildren();if(!h.length){area.textContent='История пока пуста';area.style.padding='16px';return}
+ area.style.padding='0';let table=document.createElement('table'),thead=document.createElement('thead'),header=document.createElement('tr');
+ ['Дата','Участник','Результат'].forEach(s=>{let th=document.createElement('th');th.textContent=s;header.append(th)});thead.append(header);table.append(thead);
+ let body=document.createElement('tbody');h.forEach(x=>{let tr=document.createElement('tr');
+ [new Date(x.created_at).toLocaleString('ru-RU'),x.full_name,x.prize_title].forEach(s=>{let td=document.createElement('td');td.textContent=s;tr.append(td)});body.append(tr)});
+ table.append(body);area.append(table)
+}
+$('addPrize').onclick=async()=>{if(!logged||spinning)return;
+ let title=$('newTitle').value.trim();if(!title){toast('Введите название');return}if(prizes.length>=30){toast('Максимум 30 секторов');return}
+ const {error}=await db.from('fortune_prizes').insert({title,description:'Подарок от ТИАН-Трейд.',is_anti:false,sort_order:prizes.length});
+ if(error)toast(errorMessage(error));else{$('newTitle').value='';await refreshAdmin()}
+};
 function download(name,content,type){let url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-$('exportCsv').onclick=()=>{if(!logged)return;let rows=[['Дата','Участник','Результат','Антикарточка'],...state.history.map(x=>[x.at,x.name,x.prize,x.anti?'Да':'Нет'])];download('tian-history.csv','\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n'),'text/csv;charset=utf-8')};
-$('exportJson').onclick=()=>{if(logged)download('tian-backup.json',JSON.stringify(state,null,2),'application/json')};$('importBtn').onclick=()=>{if(logged)$('importFile').click()};$('importFile').onchange=async e=>{if(!logged)return;let f=e.target.files[0];if(!f)return;try{let data=JSON.parse(await f.text());if(!Array.isArray(data.prizes)||data.prizes.length<2||data.prizes.length>30||!Array.isArray(data.history)||!data.prizes.every(p=>typeof p.title==='string'&&p.title.length<=120)||!data.history.every(h=>typeof h.name==='string'&&typeof h.prize==='string'&&typeof h.at==='string'))throw Error('Некорректный файл');if(confirm('Заменить призы и историю данными из файла?')){state=data;save();draw();renderAdmin()}}catch(err){toast('Ошибка импорта: '+err.message)}e.target.value=''};
-$('clearHistory').onclick=()=>{if(!logged||!confirm('Удалить всю историю розыгрыша?'))return;state.history=[];reroll=false;person='';$('spin').disabled=false;$('spin').textContent='Крутить колесо ✦';hide('result');save();renderAdmin()};
+$('exportCsv').onclick=()=>{if(!logged)return;let rows=[['Дата','Участник','Результат','Антикарточка'],...history.map(x=>[x.created_at,x.full_name,x.prize_title,x.is_anti?'Да':'Нет'])];
+ download('tian-history.csv','\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n'),'text/csv;charset=utf-8')};
+$('exportJson').onclick=()=>{if(logged)download('tian-backup.json',JSON.stringify({prizes,history},null,2),'application/json')};
+$('importBtn').disabled=true;$('importBtn').title='Импорт отключён во избежание перезаписи защищённой истории';
+$('clearHistory').disabled=true;$('clearHistory').title='Удаление истории выполняется только через защищённую консоль Supabase';
 window.addEventListener('resize',draw);draw();
+(async()=>{if(!db){$('spin').disabled=true;$('spin').textContent='Ожидание подключения Supabase';toast('Нужно настроить Supabase URL и publishable key в supabase-config.js');return}
+ try{await loadPrizes();await checkAdmin()}catch(e){toast('Ошибка подключения: '+errorMessage(e))}})();
 </script></body></html>
