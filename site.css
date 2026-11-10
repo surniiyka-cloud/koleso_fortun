@@ -138,3 +138,11 @@ html,body{height:100%;overflow:hidden}
  .wheelbox{height:auto;max-height:100%}
  .ring{flex:0 1 auto}
 }
+
+/* Reward popup: no horizontal scrollbar or overflow from decorative rings. */
+.reward-overlay{overflow-x:hidden}
+.reward-modal{overflow-x:hidden;overflow-y:auto;scrollbar-width:none;max-width:calc(100vw - 24px)}
+.reward-modal::-webkit-scrollbar{display:none}
+.reward-modal:before{left:0;right:0;width:100%;box-sizing:border-box}
+.reward-content{min-width:0;overflow-wrap:anywhere}
+@media(max-width:600px){.reward-modal{max-height:calc(100dvh - 20px)}}
