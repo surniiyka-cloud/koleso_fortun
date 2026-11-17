@@ -17,29 +17,32 @@ function renderAvailablePrizes(winnerId=lastWinnerId){
  const list=$('availablePrizeList'),panel=$('availablePrizes');
  if(!list||!panel)return;
  list.replaceChildren();
- const available=prizes.filter(p=>!p.is_anti&&!isDisplayOnly(p));
- available.forEach((p,i)=>{
-  const li=document.createElement('li');
-  const btn=document.createElement('button');btn.type='button';
-  btn.className='available-prize-item'+(winnerId&&p.id===winnerId?' selected':'');
-  btn.setAttribute('aria-label','Подробнее о призе: '+p.title);
-  const number=document.createElement('span');number.className='prize-number';number.textContent=String(i+1).padStart(2,'0');
+ prizes.forEach((p,i)=>{
+  const demo=isDisplayOnly(p);
+  const li=document.createElement('li'),btn=document.createElement('button');
+  btn.type='button';
+  btn.className='available-prize-item'+(winnerId&&p.id===winnerId?' selected':'')+(demo?' is-demo':'');
+  btn.setAttribute('aria-label','Подробнее о секторе '+(i+1)+': '+p.title);
+  const num=document.createElement('span');num.className='prize-number';num.textContent=String(i+1).padStart(2,'0');
   const content=document.createElement('span');content.className='prize-card-text';
   const title=document.createElement('strong');title.textContent=p.title;
-  const caption=document.createElement('small');caption.textContent=winnerId&&p.id===winnerId?'ТВОЙ ПРИЗ · подробнее':'Нажми для подробностей';
+  const caption=document.createElement('small');
+  caption.textContent=demo?'Демонстрационный · не разыгрывается':winnerId&&p.id===winnerId?'ТВОЙ ПРИЗ · подробнее':'Нажми для подробностей';
   content.append(title,caption);
   const arrow=document.createElement('span');arrow.className='prize-arrow';arrow.textContent='↗';
-  btn.append(number,content,arrow);btn.onclick=()=>showPrizeDetails(p);
+  btn.append(num,content,arrow);
+  btn.onclick=()=>showPrizeDetails(p);
   li.append(btn);list.append(li);
  });
- $('availablePrizeCount').textContent=String(available.length);
+ $('availablePrizeCount').textContent=prizes.filter(p=>!p.is_anti&&!isDisplayOnly(p)).length+' из '+prizes.length;
  panel.classList.remove('hidden');
 }
+
 function showPrizeDetails(p){
  const story=GIFT_STORIES[p.title.trim().toLocaleLowerCase('ru')];
  $('detailIcon').textContent=story?.icon||'🎁';
  $('detailTitle').textContent=p.title;
- $('detailText').textContent=p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.';
+ $('detailText').textContent=(isDisplayOnly(p)?'Демонстрационный сектор — не участвует в розыгрыше. ':'')+(p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.');
  show('detailOverlay');$('detailClose').focus();
 }
 function revealPrizeList(){
@@ -78,7 +81,7 @@ function draw(){
 async function loadPrizes(){
  if(!db)return;
  const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,is_display_only,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;prizes=data||[];if(prizes.length&& !prizes.some(p=>/^BMW X5\b/i.test(p.title)))prizes.push(SHOWCASE_BMW);draw();renderAvailablePrizes();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
+ if(error)throw error;prizes=data||[];if(prizes.length&&!prizes.some(p=>/^BMW X5\b/i.test(p.title)))prizes.push(SHOWCASE_BMW);draw();if(!$('availablePrizes').classList.contains('hidden'))renderAvailablePrizes();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
 }
 async function loadHistory(){
  if(!db||!logged)return;
