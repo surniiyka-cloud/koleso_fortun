@@ -83,62 +83,6 @@ body.reward-open{overflow:hidden}.reward-overlay{position:fixed;inset:0;z-index:
 @media(max-width:560px){.shell{padding:0 16px}.head{height:75px}.mark{width:42px;height:42px;font-size:19px}.logo strong{font-size:11px}.logo small{font-size:8px}.head .ghost{font-size:10px;padding:10px}.hero{padding-top:31px}.hero h1{font-size:clamp(31px,9vw,44px);margin:17px 0}.hero p{font-size:12px}.wheelbox{padding:25px 4px 9px}.wheel-decor{margin-bottom:22px;font-size:9px;letter-spacing:.15em}.ring{padding:10px}.pointer{top:-15px;border-left-width:12px;border-right-width:12px;border-top-width:34px}.cap{width:66px;height:66px;font-size:11px;border-width:6px}.wheel-caption{font-size:10px}.entry-card{padding:28px 24px}.entry-card h2{font-size:24px}.entry-card p{font-size:13px}.fields input{font-size:14px;padding:17px}.footer{display:block;line-height:2}.reward-content{padding:49px 23px 27px}.reward-icon{width:78px;height:78px;font-size:38px}.reward-modal h2{font-size:26px}.reward-lead{font-size:14px}.reward-benefit{padding:18px}.reward-benefit p{font-size:13px}.modalhead{padding:17px}.modalhead h2{font-size:16px}.pad{padding:16px}.stat{padding:12px}.stat b{font-size:19px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 
-@media(min-width:801px) and (min-height:560px){
-html,body{height:100%;overflow:hidden}
-.shell{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-.head{height:clamp(58px,8dvh,76px);flex-shrink:0}
-.hero{padding:clamp(12px,2dvh,25px) 0 10px;flex-shrink:0}
-.hero h1{font-size:clamp(36px,4.5vw,65px);margin:12px 0 9px}
-.layout{flex:1;min-height:0;margin:0;align-items:center}
-.wheelbox{height:100%;padding:0;gap:12px}
-.wheel-decor,.wheel-caption{margin:0;flex-shrink:0}
-.ring{width:min(100%,calc(100dvh - 330px),650px);max-height:calc(100% - 75px)}
-.entry-card{padding:clamp(22px,3dvh,42px)}
-.entry-card h2{font-size:clamp(22px,2vw,28px);margin:10px 0}
-.entry-card p{margin-bottom:16px;line-height:1.55}
-.fields input{padding:13px 16px}
-.entry-card .primary{padding:15px;margin-top:12px}
-.subtle{margin-top:12px}
-.footer{flex-shrink:0;padding:12px 0}
-}
-@media(min-width:801px) and (max-height:700px){
-.wheel-decor,.wheel-caption{display:none}
-.ring{width:min(100%,calc(100dvh - 240px),650px);max-height:100%}
-.hero{padding:9px 0}
-.hero h1{font-size:clamp(34px,4vw,53px);margin:7px 0}
-}
-/* Center the wheel and participant form as one balanced desktop composition. */
-@media (min-width:801px){
- .layout{
-  grid-template-columns:minmax(0,1fr) minmax(350px,490px);
-  align-items:center;
-  justify-items:center;
-  gap:clamp(20px,3.2vw,48px);
- }
- .wheelbox{
-  width:100%;
-  height:auto;
-  max-height:100%;
-  align-self:center;
-  justify-self:center;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
- }
- .side{
-  width:100%;
-  max-width:490px;
-  align-self:center;
-  justify-self:center;
- }
- .entry-card{width:100%;margin:0}
-}
-@media (min-width:801px) and (min-height:560px){
- .wheelbox{height:auto;max-height:100%}
- .ring{flex:0 1 auto}
-}
-
 /* Reward popup: no horizontal scrollbar or overflow from decorative rings. */
 .reward-overlay{overflow-x:hidden}
 .reward-modal{overflow-x:hidden;overflow-y:auto;scrollbar-width:none;max-width:calc(100vw - 24px)}
@@ -202,3 +146,27 @@ html,body{height:100%;overflow:hidden}
 .prize-detail-modal .prize-detail-tip{font-size:11px;color:#96aa9e;margin-top:30px}
 .prize-detail-icon{width:78px;height:78px;margin:0 auto 18px;display:grid;place-items:center;border-radius:19px;background:#2b563c;font-size:39px}
 @media(max-width:800px){.side{align-self:stretch;max-width:600px}}
+
+/* Layout reset: no viewport clipping or vertically centered grid tracks. */
+@media(min-width:801px){
+ html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+ .shell{height:auto;min-height:100vh;display:block;overflow:visible}
+ .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr);align-items:start;gap:clamp(25px,3.6vw,58px);margin:28px 0 55px}
+ .wheelbox{height:auto;max-height:none;align-self:start;justify-content:flex-start;padding:10px 0 0}
+ .ring{width:min(100%,620px);max-height:none;flex:none}
+ .side{align-self:start;justify-self:stretch;max-width:none;gap:16px}
+ .entry-card{padding:clamp(25px,2.7vw,40px)}
+}
+@media(max-width:800px){
+ html,body{height:auto;overflow-x:hidden;overflow-y:auto}
+ .shell{height:auto;overflow:visible}
+ .layout{display:grid;grid-template-columns:1fr;align-items:start;gap:22px;margin:22px 0 44px}
+ .wheelbox{height:auto;justify-content:flex-start;order:0}
+ .side{height:auto;align-self:start;order:1;max-width:600px;justify-self:center}
+ .ring{width:min(100%,560px);max-height:none}
+}
+.available-prizes{max-height:none;overflow:visible}
+.available-prize-list{max-height:none}
+.reward-modal .reward-done{display:inline-flex;align-items:center;justify-content:center;max-width:100%;min-width:0;width:min(100%,365px)}
+.reward-modal #viewAllPrizes{display:flex}
+.reward-modal #viewAllPrizes.hidden{display:none}
