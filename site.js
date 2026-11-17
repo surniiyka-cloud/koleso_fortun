@@ -9,22 +9,43 @@ function show(id){$(id).classList.remove('hidden')}function hide(id){$(id).class
 function toast(msg){$('notice').textContent=msg;show('notice');clearTimeout(toast.t);toast.t=setTimeout(()=>hide('notice'),5000)}
 function errorMessage(e){return e&&e.message?e.message:'Ошибка сети или базы данных'}
 function nameOf(p){return p.title}
-function isDisplayOnly(p){return p.is_display_only===true||/^(100\s?000|500\s?000|1\s?000\s?000)\s?₽$/.test(p.title.trim())}
-function renderAvailablePrizes(winnerId=null){
+function isDisplayOnly(p){return p.is_display_only===true||/^(100\s?000|500\s?000|1\s?000\s?000)\s?₽$/.test(p.title.trim())||/^BMW X5\b/i.test(p.title.trim())}
+let lastWinnerId=null;
+function renderAvailablePrizes(winnerId=lastWinnerId){
+ lastWinnerId=winnerId;
  const list=$('availablePrizeList'),panel=$('availablePrizes');
  if(!list||!panel)return;
  list.replaceChildren();
  const available=prizes.filter(p=>!p.is_anti&&!isDisplayOnly(p));
- available.forEach(p=>{
-  const item=document.createElement('li');
-  item.className='available-prize-item'+(winnerId&&p.id===winnerId?' selected':'');
+ available.forEach((p,i)=>{
+  const li=document.createElement('li');
+  const btn=document.createElement('button');btn.type='button';
+  btn.className='available-prize-item'+(winnerId&&p.id===winnerId?' selected':'');
+  btn.setAttribute('aria-label','Подробнее о призе: '+p.title);
+  const number=document.createElement('span');number.className='prize-number';number.textContent=String(i+1).padStart(2,'0');
+  const content=document.createElement('span');content.className='prize-card-text';
   const title=document.createElement('strong');title.textContent=p.title;
-  const marker=document.createElement('span');marker.textContent=winnerId&&p.id===winnerId?'ТВОЙ ПРИЗ':'✦';
-  item.append(marker,title);list.append(item);
+  const caption=document.createElement('small');caption.textContent=winnerId&&p.id===winnerId?'ТВОЙ ПРИЗ · подробнее':'Нажми для подробностей';
+  content.append(title,caption);
+  const arrow=document.createElement('span');arrow.className='prize-arrow';arrow.textContent='↗';
+  btn.append(number,content,arrow);btn.onclick=()=>showPrizeDetails(p);
+  li.append(btn);list.append(li);
  });
  $('availablePrizeCount').textContent=String(available.length);
  panel.classList.remove('hidden');
 }
+function showPrizeDetails(p){
+ const story=GIFT_STORIES[p.title.trim().toLocaleLowerCase('ru')];
+ $('detailIcon').textContent=story?.icon||'🎁';
+ $('detailTitle').textContent=p.title;
+ $('detailText').textContent=p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.';
+ show('detailOverlay');$('detailClose').focus();
+}
+function revealPrizeList(){
+ closeReward();renderAvailablePrizes();
+ requestAnimationFrame(()=>$('availablePrizes').scrollIntoView({behavior:'smooth',block:'center'}));
+}
+
 function draw(){
  const size=Math.max(220,Math.round(cv.getBoundingClientRect().width)),d=Math.min(window.devicePixelRatio||1,2);
  cv.width=size*d;cv.height=size*d;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,size,size);
@@ -55,7 +76,7 @@ function draw(){
 }
 async function loadPrizes(){
  if(!db)return;
- const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
+ const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,is_display_only,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
  if(error)throw error;prizes=data||[];draw();if(!$('availablePrizes').classList.contains('hidden'))renderAvailablePrizes();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
 }
 async function loadHistory(){
@@ -91,14 +112,17 @@ function showReward(tag,title,detail,warning=false){
  $('result').classList.toggle('warning',warning);
  $('reroll').classList.toggle('hidden',!warning);
  $('rewardDone').classList.toggle('hidden',warning);
- show('rewardOverlay');document.body.classList.add('reward-open');
+ $('viewAllPrizes').classList.toggle('hidden',!prizes.some(p=>!p.is_anti&&!isDisplayOnly(p)));show('rewardOverlay');document.body.classList.add('reward-open');
  $('result').focus();
 }
 function closeReward(){hide('rewardOverlay');document.body.classList.remove('reward-open')}
+$('viewAllPrizes').onclick=revealPrizeList;
+$('detailClose').onclick=()=>hide('detailOverlay');
+$('detailOverlay').onclick=e=>{if(e.target===$('detailOverlay'))hide('detailOverlay')};
 $('rewardClose').onclick=closeReward;
 $('rewardDone').onclick=closeReward;
 $('rewardOverlay').onclick=e=>{if(e.target===$('rewardOverlay'))closeReward()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('rewardOverlay').classList.contains('hidden'))closeReward()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('detailOverlay').classList.contains('hidden'))hide('detailOverlay');else if(!$('rewardOverlay').classList.contains('hidden'))closeReward()}});
 
 function animateTo(index,finished){
  let step=2*Math.PI/prizes.length,current=((angle%(2*Math.PI))+2*Math.PI)%(2*Math.PI),dest=((-index*step)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
@@ -119,6 +143,7 @@ async function spin(){
   const win=Array.isArray(data)?data[0]:data;
   if(!win)throw Error('Сервер не вернул результат.');
   person=next;
+  if(isDisplayOnly({title:win.prize_title}))throw Error('Сервер вернул демонстрационный сектор. Розыгрыш остановлен: обновите SQL-функцию.');
   const i=prizes.findIndex(p=>p.id===win.prize_id);
   if(i<0){await loadPrizes()}
   const idx=prizes.findIndex(p=>p.id===win.prize_id);
