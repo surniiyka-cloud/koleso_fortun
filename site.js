@@ -9,6 +9,22 @@ function show(id){$(id).classList.remove('hidden')}function hide(id){$(id).class
 function toast(msg){$('notice').textContent=msg;show('notice');clearTimeout(toast.t);toast.t=setTimeout(()=>hide('notice'),5000)}
 function errorMessage(e){return e&&e.message?e.message:'Ошибка сети или базы данных'}
 function nameOf(p){return p.title}
+function isDisplayOnly(p){return p.is_display_only===true||/^(100\s?000|500\s?000|1\s?000\s?000)\s?₽$/.test(p.title.trim())}
+function renderAvailablePrizes(winnerId=null){
+ const list=$('availablePrizeList'),panel=$('availablePrizes');
+ if(!list||!panel)return;
+ list.replaceChildren();
+ const available=prizes.filter(p=>!p.is_anti&&!isDisplayOnly(p));
+ available.forEach(p=>{
+  const item=document.createElement('li');
+  item.className='available-prize-item'+(winnerId&&p.id===winnerId?' selected':'');
+  const title=document.createElement('strong');title.textContent=p.title;
+  const marker=document.createElement('span');marker.textContent=winnerId&&p.id===winnerId?'ТВОЙ ПРИЗ':'✦';
+  item.append(marker,title);list.append(item);
+ });
+ $('availablePrizeCount').textContent=String(available.length);
+ panel.classList.remove('hidden');
+}
 function draw(){
  const size=Math.max(220,Math.round(cv.getBoundingClientRect().width)),d=Math.min(window.devicePixelRatio||1,2);
  cv.width=size*d;cv.height=size*d;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,size,size);
@@ -40,7 +56,7 @@ function draw(){
 async function loadPrizes(){
  if(!db)return;
  const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;prizes=data||[];draw();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
+ if(error)throw error;prizes=data||[];draw();if(!$('availablePrizes').classList.contains('hidden'))renderAvailablePrizes();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
 }
 async function loadHistory(){
  if(!db||!logged)return;
@@ -109,6 +125,7 @@ async function spin(){
   if(idx<0)throw Error('Получен приз, которого нет в актуальном списке. Обратись к администратору.');
   $('spin').textContent='Колесо вращается…';closeReward();
   animateTo(idx,()=>{
+   renderAvailablePrizes(win.is_anti?null:win.prize_id);
    spinning=false;$('spin').disabled=false;$('reroll').disabled=false;
    if(win.is_anti){needsReroll=true;$('spin').textContent='Крутить ещё раз ↻';
     showReward('⚡ СИСТЕМНАЯ ОШИБКА','Упс! Похоже, система дала сбой.','Но мы же не оставим тебя без подарка в день рождения? Крути ещё раз!',true)}
