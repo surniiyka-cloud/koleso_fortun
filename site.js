@@ -4,6 +4,7 @@ const $=id=>document.getElementById(id);
 const configured=typeof window.FORTUNE_SUPABASE_URL==='string'&&/^https:\/\/[-a-z0-9]+\.supabase\.co\/?$/.test(window.FORTUNE_SUPABASE_URL)&&typeof window.FORTUNE_SUPABASE_KEY==='string'&&window.FORTUNE_SUPABASE_KEY.length>15;
 const db=configured&&window.supabase?window.supabase.createClient(window.FORTUNE_SUPABASE_URL,window.FORTUNE_SUPABASE_KEY):null;
 let prizes=[],history=[],angle=0,spinning=false,person='',needsReroll=false,logged=false,adminUser=null;
+const SHOWCASE_BMW={id:'showcase-bmw-x5-2026',title:'BMW X5 · 19 300 000 ₽',description:'BMW X5 пятого поколения (G65), 2026 год. Ориентировочная цена 19 300 000 ₽ для бензиновой версии 3,0 л (400 л.с.) по Autonews от 16 ноября 2026 года. Демонстрационный сектор, не участвует в розыгрыше.',is_anti:false,is_display_only:true,sort_order:14,showcase_only:true};
 const cv=$('wheel'),ctx=cv.getContext('2d');
 function show(id){$(id).classList.remove('hidden')}function hide(id){$(id).classList.add('hidden')}
 function toast(msg){$('notice').textContent=msg;show('notice');clearTimeout(toast.t);toast.t=setTimeout(()=>hide('notice'),5000)}
@@ -77,7 +78,7 @@ function draw(){
 async function loadPrizes(){
  if(!db)return;
  const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,is_display_only,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;prizes=data||[];draw();if(!$('availablePrizes').classList.contains('hidden'))renderAvailablePrizes();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
+ if(error)throw error;prizes=data||[];if(prizes.length&& !prizes.some(p=>/^BMW X5\b/i.test(p.title)))prizes.push(SHOWCASE_BMW);draw();renderAvailablePrizes();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
 }
 async function loadHistory(){
  if(!db||!logged)return;
@@ -193,8 +194,8 @@ function openHistoryPreview(record){
  }
 }
 function renderAdmin(){
- if(!logged)return;const root=$('prizeList');root.replaceChildren();$('prizeCount').textContent='('+prizes.length+')';
- prizes.forEach((p,i)=>{
+ if(!logged)return;const root=$('prizeList');root.replaceChildren();const editablePrizes=prizes.filter(p=>!p.showcase_only);$('prizeCount').textContent='('+editablePrizes.length+')';
+ editablePrizes.forEach((p,i)=>{
   const row=document.createElement('div');row.className='prize prize-editor';
   const fields=document.createElement('div');fields.className='prize-fields';
   const titleLabel=document.createElement('label');titleLabel.className='prize-label';titleLabel.textContent='Название';
@@ -225,7 +226,7 @@ function renderAdmin(){
   };
   actions.append(saveBtn);
   const del=document.createElement('button');del.className='delete';del.textContent='Удалить';del.title='Удалить сектор';
-  del.disabled=prizes.length<=2;
+  del.disabled=editablePrizes.length<=2;
   del.onclick=async()=>{
    if(spinning||!confirm('Удалить сектор «'+p.title+'»?'))return;
    const {error}=await db.from('fortune_prizes').delete().eq('id',p.id);
@@ -252,7 +253,7 @@ function renderAdmin(){
  table.append(body);area.append(table)
 }
 $('addPrize').onclick=async()=>{if(!logged||spinning)return;
- let title=$('newTitle').value.trim();if(!title){toast('Введите название');return}if(prizes.length>=30){toast('Максимум 30 секторов');return}
+ let title=$('newTitle').value.trim();if(!title){toast('Введите название');return}if(prizes.filter(p=>!p.showcase_only).length>=30){toast('Максимум 30 секторов');return}
  const {error}=await db.from('fortune_prizes').insert({title,description:'Подарок от ТИАН-Трейд.',is_anti:false,sort_order:prizes.length});
  if(error)toast(errorMessage(error));else{$('newTitle').value='';await refreshAdmin()}
 };
