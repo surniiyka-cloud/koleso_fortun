@@ -1,6 +1,6 @@
 -- Apply in Supabase SQL Editor as the project owner.
 -- Replaces the wheel catalog; existing historical result names remain stored.
--- Cash amounts are openly disclosed display-only sectors and are never eligible for the server draw.
+-- Cash amounts and BMW X5 are disclosed display-only sectors and are never eligible for the server draw.
 begin;
 alter table public.fortune_prizes add column if not exists is_display_only boolean not null default false;
 
@@ -21,7 +21,8 @@ values
  ('Статус «Не беспокоить»','Право на два часа поставить статус «Не беспокоить» без объяснений.',false,false,10),
  ('100 000 ₽','Демонстрационный денежный сектор.',false,true,11),
  ('500 000 ₽','Демонстрационный денежный сектор.',false,true,12),
- ('1 000 000 ₽','Демонстрационный денежный сектор.',false,true,13);
+ ('1 000 000 ₽','Демонстрационный денежный сектор.',false,true,13),
+ ('BMW X5 · 19 300 000 ₽','Демонстрационный сектор BMW X5 2026 (G65). Ориентировочная цена 19 300 000 ₽ по Autonews от 16.11.2026, бензиновая версия 3,0 л, 400 л.с. Не участвует в розыгрыше.',false,true,14);
 
 create or replace function public.fortune_draw(p_first text, p_last text)
 returns table (prize_id uuid, prize_title text, prize_description text, is_anti boolean)
