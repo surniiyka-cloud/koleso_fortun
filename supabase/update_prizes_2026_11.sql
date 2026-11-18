@@ -1,29 +1,22 @@
--- Apply in Supabase SQL Editor as the project owner.
--- Replaces the wheel catalog; existing historical result names remain stored.
--- Cash amounts and BMW X5 are disclosed display-only sectors and are never eligible for the server draw.
+-- Run in Supabase SQL Editor as project owner. 11-sector corporate wheel, 18 Nov 2026.
+-- The premium is a visibly disclosed non-draw sector; server selection excludes it.
+-- Existing spin history is preserved (removed prize foreign keys become NULL).
 begin;
 alter table public.fortune_prizes add column if not exists is_display_only boolean not null default false;
-
--- Historical spins keep their prize_title; foreign keys become NULL when old prizes are removed.
 delete from public.fortune_prizes;
 insert into public.fortune_prizes(title,description,is_anti,is_display_only,sort_order)
 values
- ('Антидедлайн','Право продлить дедлайн по любой внутренней задаче на 24 часа.',false,false,0),
- ('Официальный высыпон','Возможность один раз опоздать на работу на 1–2 часа.',false,false,1),
- ('Мерч-сюрприз','Брендированный мерч на выбор.',false,false,2),
- ('Пятничная свобода','Право уйти в пятницу с работы на 2–3 часа раньше без отработки.',false,false,3),
- ('Абонемент на опоздания','Три опоздания до 30 минут в течение месяца.',false,false,4),
- ('День удаленки без объяснения причин','Право поработать из дома в любой выбранный день без объяснения причины.',false,false,5),
- ('Личный сиеста-час','Право увеличить обеденный перерыв на один час в любой день.',false,false,6),
- ('Именинный отгул','Дополнительный оплачиваемый выходной в день рождения или в течение недели после него.',false,false,7),
- ('Официальный день самообразования','Рабочий день без текущих задач для профильных книг, курсов и вебинаров.',false,false,8),
- ('Плюс в карму','Официальная благодарность от директора в общем чате с указанием заслуг.',false,false,9),
- ('Статус «Не беспокоить»','Право на два часа поставить статус «Не беспокоить» без объяснений.',false,false,10),
- ('100 000 ₽','Демонстрационный денежный сектор.',false,true,11),
- ('500 000 ₽','Демонстрационный денежный сектор.',false,true,12),
- ('1 000 000 ₽','Демонстрационный денежный сектор.',false,true,13),
- ('BMW X5 · 19 300 000 ₽','Демонстрационный сектор BMW X5 2026 (G65). Ориентировочная цена 19 300 000 ₽ по Autonews от 16.11.2026, бензиновая версия 3,0 л, 400 л.с. Не участвует в розыгрыше.',false,true,14);
-
+ (''Антидедлайн'',''Право продлить дедлайн по любой внутренней задаче на 24 часа.'',false,false,0),
+ (''Официальный высыпон'',''Возможность один раз прийти на работу к 10:00.'',false,false,1),
+ (''Мерч-сюрприз'',''Брендированный мерч на выбор.'',false,false,2),
+ (''Пятничная свобода'',''Право уйти с работы в пятницу в 15:00.'',false,false,3),
+ (''Главный герой офиса'',''Сегодня ты именинник! Принимай поздравления и комплименты в течение всего дня от сотрудников ОП.'',false,false,4),
+ (''Личный сиеста-час'',''Право увеличить обеденный перерыв на один час в любой день.'',false,false,5),
+ (''Именинный отгул'',''Дополнительный оплачиваемый выходной в день рождения или в течение недели после него.'',false,false,6),
+ (''Премия 500 000 ₽ до вычета НДФЛ'',''Специальный денежный сектор. Не участвует в розыгрыше.'',false,true,7),
+ (''Плюс в карму'',''Официальная благодарность от генерального директора в общем чате с указанием заслуг.'',false,false,8),
+ (''Стратегический перекус'',''Угости коллег вкусной пиццей в пятницу в офисе ОП.'',false,false,9),
+ (''Энергия на максимум'',''Сгоняй в спортзал, вернись бодрым и покажи, как надо закрывать задачи на 300%.'',false,false,10);
 create or replace function public.fortune_draw(p_first text, p_last text)
 returns table (prize_id uuid, prize_title text, prize_description text, is_anti boolean)
 language plpgsql security definer set search_path = '' as $$
@@ -56,4 +49,5 @@ begin
  values (v_first || ' ' || v_last,v_key,v_pick.id,v_pick.title,v_pick.is_anti);
  return query select v_pick.id,v_pick.title,v_pick.description,v_pick.is_anti;
 end;$$;
+
 commit;
