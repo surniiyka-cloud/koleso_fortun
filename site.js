@@ -26,7 +26,7 @@ function renderAvailablePrizes(winnerId=lastWinnerId){
   const details=document.createElement('span');details.className='prize-card-text';
   const title=document.createElement('strong');title.textContent=p.title;
   const hint=document.createElement('small');
-  hint.textContent=selected?'ТВОЙ ПРИЗ':isDisplayOnly(p)?'Специальный сектор · не участвует в розыгрыше':'Нажми, чтобы узнать подробности';
+  hint.textContent=selected?'ТВОЙ ПРИЗ':isDisplayOnly(p)?'Специальный сектор:'Нажми, чтобы узнать подробности';
   details.append(title,hint);
   const arrow=document.createElement('span');arrow.className='prize-arrow';arrow.textContent='↗';
   btn.append(number,details,arrow);
@@ -103,7 +103,7 @@ const GIFT_STORIES={
  "главный герой офиса":{icon:"🌟",lead:'Твой подарок от ТИАН-Трейд!',description:"Сегодня ты именинник! Принимай поздравления и комплименты в течение всего дня от сотрудников ОП."},
  "личный сиеста-час":{icon:"☕",lead:'Твой подарок от ТИАН-Трейд!',description:"Право увеличить обеденный перерыв на один час в любой день."},
  "именинный отгул":{icon:"🎂",lead:'Твой подарок от ТИАН-Трейд!',description:"Дополнительный оплачиваемый выходной в день рождения или в течение недели после него."},
- "премия 500 000 ₽ до вычета ндфл":{icon:"💎",lead:'Твой подарок от ТИАН-Трейд!',description:"Специальный денежный сектор. Не участвует в розыгрыше."},
+ "премия 500 000 ₽ до вычета ндфл":{icon:"💎",lead:'Твой подарок от ТИАН-Трейд!',description:"Специальный денежный сектор."},
  "плюс в карму":{icon:"🏆",lead:'Твой подарок от ТИАН-Трейд!',description:"Официальная благодарность от генерального директора в общем чате с указанием заслуг."},
  "стратегический перекус":{icon:"🍕",lead:'Твой подарок от ТИАН-Трейд!',description:"Угости коллег вкусной пиццей в пятницу в офисе ОП."},
  "энергия на максимум":{icon:"⚡",lead:'Твой подарок от ТИАН-Трейд!',description:"Сгоняй в спортзал, вернись бодрым и покажи, как надо закрывать задачи на 300%."}
