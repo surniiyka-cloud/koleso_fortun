@@ -40,7 +40,7 @@ function showPrizeDetails(p){
  const story=GIFT_STORIES[p.title.trim().toLocaleLowerCase('ru')];
  $('detailIcon').textContent=story?.icon||'🎁';
  $('detailTitle').textContent=p.title;
- $('detailText').textContent=(isDisplayOnly(p)?'Демонстрационный сектор — не участвует в розыгрыше. ':'')+(p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.');
+ $('detailText').textContent=(isDisplayOnly(p)?'':'')+(p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.');
  show('detailOverlay');$('detailClose').focus();
 }
 function revealPrizeList(){closeReward();renderAvailablePrizes();show('galleryOverlay');}
