@@ -26,7 +26,7 @@ function renderAvailablePrizes(winnerId=lastWinnerId){
   const details=document.createElement('span');details.className='prize-card-text';
   const title=document.createElement('strong');title.textContent=p.title;
   const hint=document.createElement('small');
-  hint.textContent=selected?'ТВОЙ ПРИЗ':isDisplayOnly(p)?'Специальный сектор:'Нажми, чтобы узнать подробности';
+  hint.textContent=selected?'ТВОЙ ПРИЗ':isDisplayOnly(p)?'Специальный сектор':'Нажми, чтобы узнать подробности';
   details.append(title,hint);
   const arrow=document.createElement('span');arrow.className='prize-arrow';arrow.textContent='↗';
   btn.append(number,details,arrow);
@@ -256,7 +256,21 @@ function renderAdmin(){
   const view=document.createElement('button');view.type='button';view.className='history-preview';view.textContent='Посмотреть';
   view.setAttribute('aria-label','Посмотреть выигрыш: '+x.prize_title);
   view.onclick=()=>openHistoryPreview(x);
-  resultCell.append(resultName,view);tr.append(resultCell);body.append(tr)
+  const deleteBtn=document.createElement('button');deleteBtn.type='button';deleteBtn.className='history-delete';deleteBtn.textContent='Удалить';
+  deleteBtn.setAttribute('aria-label','Удалить запись '+x.full_name+' — '+x.prize_title);
+  deleteBtn.onclick=async()=>{
+   if(!logged||spinning)return;
+   if(!confirm('Удалить ТОЛЬКО эту запись истории?\n'+x.full_name+' — '+x.prize_title+'\nПосле удаления повторное участие этого имени может стать доступным.'))return;
+   deleteBtn.disabled=true;
+   try{
+    const {data,error}=await db.rpc('fortune_delete_spin',{p_spin_id:x.id});
+    if(error)throw error;
+    if(data!==true)throw Error('Запись не найдена или уже удалена');
+    await loadHistory();renderAdmin();
+    toast('Запись участника удалена');
+   }catch(e){toast('Ошибка удаления: '+errorMessage(e));deleteBtn.disabled=false}
+  };
+  resultCell.append(resultName,view,deleteBtn);tr.append(resultCell);body.append(tr)
  });
  table.append(body);area.append(table)
 }
