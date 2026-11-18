@@ -4,38 +4,36 @@ const $=id=>document.getElementById(id);
 const configured=typeof window.FORTUNE_SUPABASE_URL==='string'&&/^https:\/\/[-a-z0-9]+\.supabase\.co\/?$/.test(window.FORTUNE_SUPABASE_URL)&&typeof window.FORTUNE_SUPABASE_KEY==='string'&&window.FORTUNE_SUPABASE_KEY.length>15;
 const db=configured&&window.supabase?window.supabase.createClient(window.FORTUNE_SUPABASE_URL,window.FORTUNE_SUPABASE_KEY):null;
 let prizes=[],history=[],angle=0,spinning=false,person='',needsReroll=false,logged=false,adminUser=null;
-const SHOWCASE_BMW={id:'showcase-bmw-x5-2026',title:'BMW X5 · 19 300 000 ₽',description:'BMW X5 пятого поколения (G65), 2026 год. Ориентировочная цена 19 300 000 ₽ для бензиновой версии 3,0 л (400 л.с.) по Autonews от 16 ноября 2026 года. Демонстрационный сектор, не участвует в розыгрыше.',is_anti:false,is_display_only:true,sort_order:14,showcase_only:true};
+const PRIZE_CATALOG=[{"title":"Антидедлайн","description":"Право продлить дедлайн по любой внутренней задаче на 24 часа.","icon":"⏳","sort_order":0,"is_display_only":false,"is_anti":false},{"title":"Официальный высыпон","description":"Возможность один раз прийти на работу к 10:00.","icon":"😴","sort_order":1,"is_display_only":false,"is_anti":false},{"title":"Мерч-сюрприз","description":"Брендированный мерч на выбор.","icon":"🎁","sort_order":2,"is_display_only":false,"is_anti":false},{"title":"Пятничная свобода","description":"Право уйти с работы в пятницу в 15:00.","icon":"🌴","sort_order":3,"is_display_only":false,"is_anti":false},{"title":"Главный герой офиса","description":"Сегодня ты именинник! Принимай поздравления и комплименты в течение всего дня от сотрудников ОП.","icon":"🌟","sort_order":4,"is_display_only":false,"is_anti":false},{"title":"Личный сиеста-час","description":"Право увеличить обеденный перерыв на один час в любой день.","icon":"☕","sort_order":5,"is_display_only":false,"is_anti":false},{"title":"Именинный отгул","description":"Дополнительный оплачиваемый выходной в день рождения или в течение недели после него.","icon":"🎂","sort_order":6,"is_display_only":false,"is_anti":false},{"title":"Премия 500 000 ₽ до вычета НДФЛ","description":"Специальный денежный сектор. Не участвует в розыгрыше.","icon":"💎","sort_order":7,"is_display_only":true,"is_anti":false},{"title":"Плюс в карму","description":"Официальная благодарность от генерального директора в общем чате с указанием заслуг.","icon":"🏆","sort_order":8,"is_display_only":false,"is_anti":false},{"title":"Стратегический перекус","description":"Угости коллег вкусной пиццей в пятницу в офисе ОП.","icon":"🍕","sort_order":9,"is_display_only":false,"is_anti":false},{"title":"Энергия на максимум","description":"Сгоняй в спортзал, вернись бодрым и покажи, как надо закрывать задачи на 300%.","icon":"⚡","sort_order":10,"is_display_only":false,"is_anti":false}];
 const cv=$('wheel'),ctx=cv.getContext('2d');
 function show(id){$(id).classList.remove('hidden')}function hide(id){$(id).classList.add('hidden')}
 function toast(msg){$('notice').textContent=msg;show('notice');clearTimeout(toast.t);toast.t=setTimeout(()=>hide('notice'),5000)}
 function errorMessage(e){return e&&e.message?e.message:'Ошибка сети или базы данных'}
 function nameOf(p){return p.title}
-function isDisplayOnly(p){return p.is_display_only===true||/^(100\s?000|500\s?000|1\s?000\s?000)\s?₽$/.test(p.title.trim())||/^BMW X5\b/i.test(p.title.trim())}
+function isDisplayOnly(p){return p.is_display_only===true||/^Премия 500 000 ₽/.test(p.title)}
 let lastWinnerId=null;
 function renderAvailablePrizes(winnerId=lastWinnerId){
  lastWinnerId=winnerId;
- const list=$('availablePrizeList'),panel=$('availablePrizes');
- if(!list||!panel)return;
+ const list=$('availablePrizeList');
  list.replaceChildren();
  prizes.forEach((p,i)=>{
-  const demo=isDisplayOnly(p);
-  const li=document.createElement('li'),btn=document.createElement('button');
-  btn.type='button';
-  btn.className='available-prize-item'+(winnerId&&p.id===winnerId?' selected':'')+(demo?' is-demo':'');
+  const li=document.createElement('li');
+  const btn=document.createElement('button');btn.type='button';
+  const selected=!!winnerId&&p.id===winnerId;
+  btn.className='available-prize-item'+(selected?' selected':'')+(isDisplayOnly(p)?' is-demo':'');
   btn.setAttribute('aria-label','Подробнее о секторе '+(i+1)+': '+p.title);
-  const num=document.createElement('span');num.className='prize-number';num.textContent=String(i+1).padStart(2,'0');
-  const content=document.createElement('span');content.className='prize-card-text';
+  const number=document.createElement('span');number.className='prize-number';number.textContent=String(i+1).padStart(2,'0');
+  const details=document.createElement('span');details.className='prize-card-text';
   const title=document.createElement('strong');title.textContent=p.title;
-  const caption=document.createElement('small');
-  caption.textContent=demo?'Демонстрационный · не разыгрывается':winnerId&&p.id===winnerId?'ТВОЙ ПРИЗ · подробнее':'Нажми для подробностей';
-  content.append(title,caption);
+  const hint=document.createElement('small');
+  hint.textContent=selected?'ТВОЙ ПРИЗ':isDisplayOnly(p)?'Специальный сектор · не участвует в розыгрыше':'Нажми, чтобы узнать подробности';
+  details.append(title,hint);
   const arrow=document.createElement('span');arrow.className='prize-arrow';arrow.textContent='↗';
-  btn.append(num,content,arrow);
+  btn.append(number,details,arrow);
   btn.onclick=()=>showPrizeDetails(p);
   li.append(btn);list.append(li);
  });
- $('availablePrizeCount').textContent=prizes.filter(p=>!p.is_anti&&!isDisplayOnly(p)).length+' из '+prizes.length;
- panel.classList.remove('hidden');
+ $('availablePrizeCount').textContent=String(prizes.length);
 }
 
 function showPrizeDetails(p){
@@ -45,10 +43,7 @@ function showPrizeDetails(p){
  $('detailText').textContent=(isDisplayOnly(p)?'Демонстрационный сектор — не участвует в розыгрыше. ':'')+(p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.');
  show('detailOverlay');$('detailClose').focus();
 }
-function revealPrizeList(){
- closeReward();renderAvailablePrizes();
- requestAnimationFrame(()=>$('availablePrizes').scrollIntoView({behavior:'smooth',block:'center'}));
-}
+function revealPrizeList(){closeReward();renderAvailablePrizes();show('galleryOverlay');}
 
 function draw(){
  const size=Math.max(220,Math.round(cv.getBoundingClientRect().width)),d=Math.min(window.devicePixelRatio||1,2);
@@ -81,7 +76,15 @@ function draw(){
 async function loadPrizes(){
  if(!db)return;
  const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,is_display_only,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;prizes=data||[];if(prizes.length&&!prizes.some(p=>/^BMW X5\b/i.test(p.title)))prizes.push(SHOWCASE_BMW);draw();if(!$('availablePrizes').classList.contains('hidden'))renderAvailablePrizes();if(!prizes.length)toast('В базе нет призов. Добавь их через админ-панель.');
+ if(error)throw error;
+ prizes=data||[];
+ const match=prizes.length===PRIZE_CATALOG.length&&prizes.every((p,i)=>p.title===PRIZE_CATALOG[i].title&&p.is_display_only===PRIZE_CATALOG[i].is_display_only);
+ if(!match){
+  prizes=PRIZE_CATALOG.map((p,i)=>({...p,id:'preview-'+i,showcase_only:true}));
+  $('spin').disabled=true;$('spin').textContent='Ожидание обновления призов';
+  toast('Новые призы подготовлены. Для розыгрыша необходимо выполнить SQL-обновление Supabase.');
+ }else if(!spinning&&!person){$('spin').disabled=false;$('spin').textContent='Крутить колесо ✦';}
+ draw();
 }
 async function loadHistory(){
  if(!db||!logged)return;
@@ -89,21 +92,17 @@ async function loadHistory(){
  if(error)throw error;history=data||[];
 }
 const GIFT_STORIES={
- 'антидедлайн':{icon:'⏳',lead:'Время теперь играет на твоей стороне!',description:'Получи дополнительные 24 часа на выполнение любой одной внутренней задачи. Спокойно согласуй перенос дедлайна и закончи работу без гонки со временем.'},
- 'официальный высыпон':{icon:'😴',lead:'Утро без будильника? Теперь официально!',description:'Один раз приходи на работу на 1–2 часа позже обычного — без отработки. Выспись, выпей кофе и начни день в своём ритме.'},
- 'право на тишину':{icon:'🔕',lead:'Никаких лишних уведомлений. Только твой фокус.',description:'Выбери один рабочий день без несрочных упоминаний в чатах и планёрок. Важные вопросы остаются, а всё остальное подождёт.'},
- 'мерч-сюрприз':{icon:'🎁',lead:'Фирменный сюрприз уже ждёт!',description:'Тебе достаётся брендированный мерч ТИАН-Трейд на выбор. Выбирай то, что действительно хочется носить или использовать каждый день.'},
- 'пятничная свобода':{icon:'🌴',lead:'Твои выходные начнутся раньше!',description:'В одну из пятниц уходи с работы на 2–3 часа раньше без отработки. Время на любимые дела, прогулку или просто заслуженный отдых.'},
- 'абонемент на опоздания':{icon:'⌚',lead:'Небольшое опоздание больше не катастрофа.',description:'В течение одного месяца тебе простят три опоздания до 30 минут каждое. Используй, когда утро решит пойти не по плану.'},
- 'день удалёнки':{icon:'🏡',lead:'Сегодня офис там, где удобно тебе!',description:'Выбирай один рабочий день и работай из дома без необходимости объяснять причину. Твои задачи остаются, а место работы выбираешь ты.'},
- 'день удаленки без объяснения причин':{icon:'🏡',lead:'Сегодня офис там, где удобно тебе!',description:'Выбирай один рабочий день и работай из дома без необходимости объяснять причину. Твои задачи остаются, а место работы выбираешь ты.'},
- 'личный сиеста-час':{icon:'☕',lead:'Час только для себя!',description:'Увеличь свой обеденный перерыв на целый час в любой выбранный день. Можно спокойно пообедать, прогуляться или решить личные дела.'},
- 'именинный отгул':{icon:'🎂',lead:'День рождения заслуживает целого дня!',description:'Забирай дополнительный оплачиваемый выходной: в свой день рождения или в течение недели после него. Отмечай без рабочих забот.'},
- 'индивидуальный менторинг':{icon:'🚀',lead:'Час больших идей и новых возможностей!',description:'Тебя ждёт личная часовая встреча с топ-менеджером или директором компании. Обсуди карьерные цели, задай вопросы или предложи свою идею.'},
- 'плюс в карму':{icon:'🌟',lead:'Твои заслуги увидят все!',description:'Директор официально поблагодарит тебя в общем чате, отметив твои достижения.'},
- 'статус «не беспокоить»':{icon:'🔕',lead:'Два часа полного фокуса!',description:'Поставь статус «Не беспокоить» на два часа без объяснения причин.'},
- 'день самообразования':{icon:'📚',lead:'Инвестируй целый день в себя!',description:'Один рабочий день можно посвятить профессиональному развитию: книгам, курсам и вебинарам вместо текущих задач.'},
- 'официальный день самообразования':{icon:'📚',lead:'Инвестируй целый день в себя!',description:'Один рабочий день можно посвятить профессиональному развитию: книгам, курсам и вебинарам вместо текущих задач.'}
+ "антидедлайн":{icon:"⏳",lead:'Твой подарок от ТИАН-Трейд!',description:"Право продлить дедлайн по любой внутренней задаче на 24 часа."},
+ "официальный высыпон":{icon:"😴",lead:'Твой подарок от ТИАН-Трейд!',description:"Возможность один раз прийти на работу к 10:00."},
+ "мерч-сюрприз":{icon:"🎁",lead:'Твой подарок от ТИАН-Трейд!',description:"Брендированный мерч на выбор."},
+ "пятничная свобода":{icon:"🌴",lead:'Твой подарок от ТИАН-Трейд!',description:"Право уйти с работы в пятницу в 15:00."},
+ "главный герой офиса":{icon:"🌟",lead:'Твой подарок от ТИАН-Трейд!',description:"Сегодня ты именинник! Принимай поздравления и комплименты в течение всего дня от сотрудников ОП."},
+ "личный сиеста-час":{icon:"☕",lead:'Твой подарок от ТИАН-Трейд!',description:"Право увеличить обеденный перерыв на один час в любой день."},
+ "именинный отгул":{icon:"🎂",lead:'Твой подарок от ТИАН-Трейд!',description:"Дополнительный оплачиваемый выходной в день рождения или в течение недели после него."},
+ "премия 500 000 ₽ до вычета ндфл":{icon:"💎",lead:'Твой подарок от ТИАН-Трейд!',description:"Специальный денежный сектор. Не участвует в розыгрыше."},
+ "плюс в карму":{icon:"🏆",lead:'Твой подарок от ТИАН-Трейд!',description:"Официальная благодарность от генерального директора в общем чате с указанием заслуг."},
+ "стратегический перекус":{icon:"🍕",lead:'Твой подарок от ТИАН-Трейд!',description:"Угости коллег вкусной пиццей в пятницу в офисе ОП."},
+ "энергия на максимум":{icon:"⚡",lead:'Твой подарок от ТИАН-Трейд!',description:"Сгоняй в спортзал, вернись бодрым и покажи, как надо закрывать задачи на 300%."}
 };
 function showReward(tag,title,detail,warning=false){
  const story=GIFT_STORIES[title.trim().toLocaleLowerCase('ru')];
@@ -116,17 +115,19 @@ function showReward(tag,title,detail,warning=false){
  $('result').classList.toggle('warning',warning);
  $('reroll').classList.toggle('hidden',!warning);
  $('rewardDone').classList.toggle('hidden',warning);
- $('viewAllPrizes').classList.toggle('hidden',!prizes.some(p=>!p.is_anti&&!isDisplayOnly(p)));show('rewardOverlay');document.body.classList.add('reward-open');
+ $('viewAllPrizes').classList.remove('hidden');show('rewardOverlay');document.body.classList.add('reward-open');
  $('result').focus();
 }
 function closeReward(){hide('rewardOverlay');document.body.classList.remove('reward-open')}
 $('viewAllPrizes').onclick=revealPrizeList;
 $('detailClose').onclick=()=>hide('detailOverlay');
+$('galleryClose').onclick=()=>hide('galleryOverlay');
+$('galleryOverlay').onclick=e=>{if(e.target===$('galleryOverlay'))hide('galleryOverlay')};
 $('detailOverlay').onclick=e=>{if(e.target===$('detailOverlay'))hide('detailOverlay')};
 $('rewardClose').onclick=closeReward;
 $('rewardDone').onclick=closeReward;
 $('rewardOverlay').onclick=e=>{if(e.target===$('rewardOverlay'))closeReward()};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('detailOverlay').classList.contains('hidden'))hide('detailOverlay');else if(!$('rewardOverlay').classList.contains('hidden'))closeReward()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('detailOverlay').classList.contains('hidden'))hide('detailOverlay');else if(!$('galleryOverlay').classList.contains('hidden'))hide('galleryOverlay');else if(!$('rewardOverlay').classList.contains('hidden'))closeReward()}});
 
 function animateTo(index,finished){
  let step=2*Math.PI/prizes.length,current=((angle%(2*Math.PI))+2*Math.PI)%(2*Math.PI),dest=((-index*step)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
@@ -140,14 +141,14 @@ async function spin(){
  if(!f||!l){toast('Укажи имя и фамилию');return}
  const next=f+' '+l;
  if(needsReroll&&next.toLocaleLowerCase('ru')!==person.toLocaleLowerCase('ru')){toast('Повторное вращение доступно только тому же участнику');return}
- if(!prizes.length){toast('Призы ещё не загружены');return}
+ if(!prizes.length||prizes.some(p=>p.showcase_only)){toast('Сначала синхронизируй новые призы с Supabase через SQL-файл');return}
  spinning=true;$('spin').disabled=true;$('reroll').disabled=true;$('spin').textContent='Определяем подарок…';
  try{
   const {data,error}=await db.rpc('fortune_draw',{p_first:f,p_last:l});if(error)throw error;
   const win=Array.isArray(data)?data[0]:data;
   if(!win)throw Error('Сервер не вернул результат.');
   person=next;
-  if(isDisplayOnly({title:win.prize_title}))throw Error('Сервер вернул демонстрационный сектор. Розыгрыш остановлен: обновите SQL-функцию.');
+  if(isDisplayOnly({title:win.prize_title}))throw Error('Получен недоступный сектор. Розыгрыш остановлен, свяжись с администратором.');
   const i=prizes.findIndex(p=>p.id===win.prize_id);
   if(i<0){await loadPrizes()}
   const idx=prizes.findIndex(p=>p.id===win.prize_id);
