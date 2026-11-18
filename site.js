@@ -76,16 +76,20 @@ function draw(){
 async function loadPrizes(){
  if(!db)return;
  const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,is_display_only,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- if(error)throw error;
- prizes=data||[];
- const match=prizes.length===PRIZE_CATALOG.length&&prizes.every((p,i)=>p.title===PRIZE_CATALOG[i].title&&p.is_display_only===PRIZE_CATALOG[i].is_display_only);
+ const live=!error?(data||[]):[];
+ const match=!error&&live.length===PRIZE_CATALOG.length&&live.every((p,i)=>p.title===PRIZE_CATALOG[i].title&&p.is_display_only===PRIZE_CATALOG[i].is_display_only&&!p.is_anti);
  if(!match){
   prizes=PRIZE_CATALOG.map((p,i)=>({...p,id:'preview-'+i,showcase_only:true}));
-  $('spin').disabled=true;$('spin').textContent='Ожидание обновления призов';
-  toast('Новые призы подготовлены. Для розыгрыша необходимо выполнить SQL-обновление Supabase.');
- }else if(!spinning&&!person){$('spin').disabled=false;$('spin').textContent='Крутить колесо ✦';}
+  $('spin').disabled=true;
+  $('spin').textContent='Сначала обновить призы';
+  toast('Новый каталог готов, но сервер ещё не обновлён. Выполни SQL-файл в Supabase.');
+ }else{
+  prizes=live;
+  if(!spinning&&!person){$('spin').disabled=false;$('spin').textContent='Крутить колесо ✦';}
+ }
  draw();
 }
+
 async function loadHistory(){
  if(!db||!logged)return;
  const {data,error}=await db.from('fortune_spins').select('id,full_name,prize_id,prize_title,is_anti,created_at').order('created_at',{ascending:false}).limit(2000);
@@ -282,5 +286,5 @@ $('clearHistory').onclick=async()=>{
  finally{btn.disabled=false}
 };
 window.addEventListener('resize',draw);window.addEventListener('pageshow',()=>{$('adminPassword').value=''});$('adminPassword').value='';draw();
-(async()=>{if(!db){$('spin').disabled=true;$('spin').textContent='Ожидание подключения Supabase';toast('Нужно настроить Supabase URL и publishable key в supabase-config.js');return}
+(async()=>{if(!db){prizes=PRIZE_CATALOG.map((p,i)=>({...p,id:'preview-'+i,showcase_only:true}));draw();$('spin').disabled=true;$('spin').textContent='Нет подключения к базе';toast('Нужно настроить Supabase URL и publishable key в supabase-config.js');return}
  try{await loadPrizes();await checkAdmin()}catch(e){toast('Ошибка подключения: '+errorMessage(e))}})();
