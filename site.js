@@ -15,6 +15,7 @@ let lastWinnerId=null;
 function renderAvailablePrizes(winnerId=lastWinnerId){
  lastWinnerId=winnerId;
  const list=$('availablePrizeList');
+ if(!list)return;
  list.replaceChildren();
  prizes.forEach((p,i)=>{
   const li=document.createElement('li');
@@ -187,7 +188,6 @@ async function spin(){
   $('spin').textContent='Колесо вращается…';closeReward();
   animateTo(idx,()=>{
    revealed=true;draw();
-   renderAvailablePrizes(win.is_anti?null:win.prize_id);
    spinning=false;$('spin').disabled=false;$('reroll').disabled=false;
    if(win.is_anti){needsReroll=true;$('spin').textContent='Крутить ещё раз ↻';
     showReward('⚡ СИСТЕМНАЯ ОШИБКА','Упс! Похоже, система дала сбой.','Но мы же не оставим тебя без подарка в день рождения? Крути ещё раз!',true)}
