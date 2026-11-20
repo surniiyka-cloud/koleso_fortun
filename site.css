@@ -219,3 +219,18 @@ body.reward-open{overflow:hidden}.reward-overlay{position:fixed;inset:0;z-index:
 .history-delete{margin:7px 0 0 7px;padding:6px 10px;border:1px solid #a9685c;border-radius:8px;color:#ffbba8;background:#452921;font:700 11px Manrope,Arial,sans-serif}
 .history-delete:hover{background:#68372d}
 .history-delete:disabled{opacity:.45}
+
+/* Ten-sector birthday theater wheel. */
+.jackpot-gallery{width:min(1100px,100%);text-align:center}
+.jackpot-gallery .gallery-intro{margin:5px 50px 18px}
+.gallery-wheel-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(230px,.75fr);align-items:center;gap:clamp(16px,3vw,40px)}
+.gallery-wheel-ring{position:relative;width:min(100%,min(61dvh,610px));aspect-ratio:1;margin:0 auto;padding:12px;border-radius:50%;background:linear-gradient(130deg,#91be9c,#173a2e 62%,#8ebd9f);box-shadow:0 12px 48px #0008}
+.gallery-wheel-ring canvas{width:100%;height:100%}
+.gallery-wheel-ring .cap{width:72px;height:72px;font-size:13px}
+.gallery-wheel-ring .pointer{top:-16px}
+.gallery-winner{text-align:left;padding:clamp(20px,3vw,35px);border:1px solid #eeb17d77;border-radius:22px;background:linear-gradient(150deg,#5a3b27,#193728)}
+.gallery-winner>span{color:#ffbc8b;font-size:11px;letter-spacing:.18em;font-weight:800}
+.gallery-winner h3{font:700 clamp(23px,3vw,39px)/1.2 Unbounded,Manrope,sans-serif;margin:17px 0;color:#fff7e8}
+.gallery-winner p{color:#d6e8db;font-size:14px;line-height:1.75}
+.gallery-million-note{margin-top:22px;color:#afc5b5;font-size:11px;line-height:1.6}
+@media(max-width:780px){.gallery-wheel-layout{grid-template-columns:1fr}.gallery-wheel-ring{width:min(100%,420px)}.jackpot-gallery .gallery-intro{margin:10px 25px 25px}}
