@@ -43,7 +43,7 @@ function showPrizeDetails(p){
  $('detailText').textContent=p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.';
  show('detailOverlay');$('detailClose').focus();
 }
-function revealPrizeList(){closeReward();renderGalleryWheel();show('galleryOverlay');}
+function revealPrizeList(){closeReward();show('galleryOverlay');requestAnimationFrame(renderGalleryWheel);}
 
 function paintWheel(canvas,rotation,showNames){
  const context=canvas.getContext('2d');
@@ -294,6 +294,6 @@ $('clearHistory').onclick=async()=>{
  }catch(e){toast('Ошибка: '+errorMessage(e)+'. Проверь supabase/clear_history.sql')}
  finally{btn.disabled=false}
 };
-window.addEventListener('resize',draw);window.addEventListener('pageshow',()=>{$('adminPassword').value=''});$('adminPassword').value='';draw();
+window.addEventListener('resize',()=>{draw();if(!$('galleryOverlay').classList.contains('hidden'))renderGalleryWheel()});window.addEventListener('pageshow',()=>{$('adminPassword').value=''});$('adminPassword').value='';draw();
 (async()=>{if(!db){prizes=PRIZE_CATALOG.map((p,i)=>({...p,id:'preview-'+i,showcase_only:true}));draw();$('spin').disabled=true;$('spin').textContent='Нет подключения к базе';toast('Нужно настроить Supabase URL и publishable key в supabase-config.js');return}
  try{await loadPrizes();await checkAdmin()}catch(e){toast('Ошибка подключения: '+errorMessage(e))}})();
