@@ -103,18 +103,29 @@ function renderGalleryWheel(){paintWheel($('galleryWheel'),angle,true)}
 
 async function loadPrizes(){
  if(!db)return;
- const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,is_display_only,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
- const live=!error?(data||[]):[];
- const match=!error&&live.length===PRIZE_CATALOG.length&&live.every((p,i)=>p.title===PRIZE_CATALOG[i].title&&p.is_display_only===PRIZE_CATALOG[i].is_display_only&&!p.is_anti);
+ const {data,error}=await db.from('fortune_prizes')
+  .select('id,title,description,is_anti,is_display_only,sort_order')
+  .order('sort_order',{ascending:true});
+ if(error){
+  prizes=PRIZE_CATALOG.map((p,i)=>({...p,id:'preview-'+i,showcase_only:true}));
+  $('spin').disabled=true;$('spin').textContent='Ошибка подключения к призам';
+  draw();toast('Ошибка чтения Supabase: '+errorMessage(error));return;
+ }
+ const live=data||[];
+ // Match the prize composition, not incidental creation order or editable descriptions.
+ const expectedDay=PRIZE_CATALOG[0];
+ const day=live.filter(p=>p.title===expectedDay.title&&p.is_display_only===false&&!p.is_anti);
+ const millions=live.filter(p=>p.title==='1 000 000 ₽'&&p.is_display_only===true&&!p.is_anti);
+ const match=live.length===10&&day.length===1&&millions.length===9;
  if(!match){
   prizes=PRIZE_CATALOG.map((p,i)=>({...p,id:'preview-'+i,showcase_only:true}));
-  $('spin').disabled=true;
-  $('spin').textContent='Сначала обновить призы';
-  toast('Новый каталог готов, но сервер ещё не обновлён. Выполни SQL-файл в Supabase.');
- }else{
-  prizes=live;
-  if(!spinning&&!person){$('spin').disabled=false;$('spin').textContent='Крутить колесо ✦';}
+  $('spin').disabled=true;$('spin').textContent='Список призов не совпадает';
+  draw();
+  toast('В Supabase найдено '+live.length+' призов, отгулов: '+day.length+', миллионных секторов: '+millions.length+'. Проверь таблицу fortune_prizes.');
+  return;
  }
+ prizes=[day[0],...millions.sort((a,b)=>a.sort_order-b.sort_order)];
+ if(!spinning&&!person){$('spin').disabled=false;$('spin').textContent='Крутить колесо ✦';}
  draw();
 }
 
