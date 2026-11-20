@@ -84,9 +84,12 @@ function paintWheel(canvas,rotation,showNames){
     context.fillText('ИМЕНИННЫЙ',0,-10,maxWidth);
     context.fillText('ОТГУЛ',0,10,maxWidth);
    }else{
-    context.font='800 '+Math.max(12,Math.min(20,size*.034))+'px Manrope,Arial';
-    context.fillText('1 000',0,-10,maxWidth);
-    context.fillText('000 ₽',0,11,maxWidth);
+    // A single radial line, sized to fit without crossing wedge borders.
+    const fullAmount='1 000 000 ₽';
+    const amountFont=Math.max(11,Math.min(18,size*.030));
+    const amountMaxWidth=R*.49;
+    context.font='800 '+amountFont+'px Manrope,Arial';
+    context.fillText(fullAmount,0,0,amountMaxWidth);
    }
   }
   context.restore();
