@@ -47,33 +47,52 @@ function revealPrizeList(){closeReward();show('galleryOverlay');requestAnimation
 
 function paintWheel(canvas,rotation,showNames){
  const context=canvas.getContext('2d');
- const size=Math.max(220,Math.round(canvas.getBoundingClientRect().width)),d=Math.min(window.devicePixelRatio||1,2);
- canvas.width=size*d;canvas.height=size*d;context.setTransform(d,0,0,d,0,0);context.clearRect(0,0,size,size);
+ const size=Math.max(220,Math.round(canvas.getBoundingClientRect().width));
+ const d=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=size*d;canvas.height=size*d;
+ context.setTransform(d,0,0,d,0,0);context.clearRect(0,0,size,size);
  const n=prizes.length,c=size/2,R=c-3;
- if(!n){context.fillStyle='#b4d6bc';context.font='700 15px Manrope,Arial';context.textAlign='center';context.fillText('Загрузка колеса…',c,c);return}
- const step=2*Math.PI/n,labelRadius=R*.68;
+ if(!n){
+  context.fillStyle='#b4d6bc';context.font='700 15px Manrope,Arial';
+  context.textAlign='center';context.fillText('Загрузка колеса…',c,c);return;
+ }
+ const step=2*Math.PI/n;
  context.save();context.translate(c,c);context.rotate(rotation);
  prizes.forEach((p,i)=>{
   const mid=-Math.PI/2+i*step,a=mid-step/2;
   context.beginPath();context.moveTo(0,0);context.arc(0,0,R,a,a+step);context.closePath();
-  context.fillStyle=i===0?'#f7ac75':i%2===0?'#174f3d':'#2c7858';
+  // Every wedge follows the same alternating green palette; the day-off is no longer orange.
+  context.fillStyle=i%2===0?'#174f3d':'#2c7858';
   context.fill();context.lineWidth=2.5;context.strokeStyle='#fff4da';context.stroke();
-  context.save();context.rotate(mid);context.translate(labelRadius,0);context.rotate(-mid-rotation);
+  context.save();context.rotate(mid);
+  context.translate(R*.67,0);
   context.textAlign='center';context.textBaseline='middle';
+  context.fillStyle='#fff9e9';
   if(!showNames){
-   context.fillStyle=i===0?'#17352b':'#fff9e9';
-   context.font='800 '+Math.max(17,Math.min(29,size*.05))+'px Manrope,Arial';
-   context.fillText('?',0,0);
-  }else if(i===0){
-   context.fillStyle='#17352b';context.font='800 '+Math.max(11,Math.min(17,size*.029))+'px Manrope,Arial';
-   context.fillText('ИМЕНИННЫЙ',0,-10,R*.37);context.fillText('ОТГУЛ',0,10,R*.37);
+   // Numbers remain upright until the prize names are revealed.
+   context.rotate(-mid-rotation);
+   context.font='800 '+Math.max(16,Math.min(26,size*.045))+'px Manrope,Arial';
+   context.fillText(String(i+1).padStart(2,'0'),0,0);
   }else{
-   context.fillStyle='#fff9e9';context.font='800 '+Math.max(13,Math.min(21,size*.037))+'px Manrope,Arial';
-   context.fillText('1 000',0,-11,R*.34);context.fillText('000 ₽',0,12,R*.34);
+   // Read text along the spoke, from the hub toward the rim.
+   // Flip left-facing labels to avoid upside-down text.
+   const direction=mid+rotation;
+   if(Math.cos(direction)<-0.0001)context.rotate(Math.PI);
+   const maxWidth=R*.43;
+   if(i===0){
+    context.font='800 '+Math.max(10,Math.min(16,size*.027))+'px Manrope,Arial';
+    context.fillText('ИМЕНИННЫЙ',0,-10,maxWidth);
+    context.fillText('ОТГУЛ',0,10,maxWidth);
+   }else{
+    context.font='800 '+Math.max(12,Math.min(20,size*.034))+'px Manrope,Arial';
+    context.fillText('1 000',0,-10,maxWidth);
+    context.fillText('000 ₽',0,11,maxWidth);
+   }
   }
   context.restore();
  });
- context.beginPath();context.arc(0,0,R,0,2*Math.PI);context.strokeStyle='#fffef2';context.lineWidth=2;context.stroke();
+ context.beginPath();context.arc(0,0,R,0,2*Math.PI);
+ context.strokeStyle='#fffef2';context.lineWidth=2;context.stroke();
  context.restore();
 }
 function draw(){paintWheel(cv,angle,revealed)}
