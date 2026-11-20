@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const configured=typeof window.FORTUNE_SUPABASE_URL==='string'&&/^https:\/\/[-a-z0-9]+\.supabase\.co\/?$/.test(window.FORTUNE_SUPABASE_URL)&&typeof window.FORTUNE_SUPABASE_KEY==='string'&&window.FORTUNE_SUPABASE_KEY.length>15;
 const db=configured&&window.supabase?window.supabase.createClient(window.FORTUNE_SUPABASE_URL,window.FORTUNE_SUPABASE_KEY):null;
-let prizes=[],history=[],angle=0,spinning=false,person='',needsReroll=false,logged=false,adminUser=null;
+let prizes=[],history=[],angle=0,spinning=false,person='',needsReroll=false,logged=false,adminUser=null,revealed=false;
 const PRIZE_CATALOG=[{"title":"Именинный отгул","description":"Дополнительный оплачиваемый выходной в день рождения или в течение недели после него.","icon":"🎂","sort_order":0,"is_anti":false,"is_display_only":false},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":1,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":2,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":3,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":4,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":5,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":6,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":7,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":8,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":9,"is_anti":false,"is_display_only":true}];
 const cv=$('wheel'),ctx=cv.getContext('2d');
 function show(id){$(id).classList.remove('hidden')}function hide(id){$(id).classList.add('hidden')}
@@ -45,42 +45,39 @@ function showPrizeDetails(p){
 }
 function revealPrizeList(){closeReward();renderGalleryWheel();show('galleryOverlay');}
 
-function draw(){
- const size=Math.max(220,Math.round(cv.getBoundingClientRect().width)),d=Math.min(window.devicePixelRatio||1,2);
- cv.width=size*d;cv.height=size*d;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,size,size);
- const n=prizes.length,c=size/2,R=c-2;
- if(!n){ctx.fillStyle='#547362';ctx.font='700 15px Manrope,Arial';ctx.textAlign='center';ctx.fillText('Загрузка подарков…',c,c);return}
- const step=2*Math.PI/n;
- ctx.save();ctx.translate(c,c);ctx.rotate(angle);
+function paintWheel(canvas,rotation,showNames){
+ const context=canvas.getContext('2d');
+ const size=Math.max(220,Math.round(canvas.getBoundingClientRect().width)),d=Math.min(window.devicePixelRatio||1,2);
+ canvas.width=size*d;canvas.height=size*d;context.setTransform(d,0,0,d,0,0);context.clearRect(0,0,size,size);
+ const n=prizes.length,c=size/2,R=c-3;
+ if(!n){context.fillStyle='#b4d6bc';context.font='700 15px Manrope,Arial';context.textAlign='center';context.fillText('Загрузка колеса…',c,c);return}
+ const step=2*Math.PI/n,labelRadius=R*.68;
+ context.save();context.translate(c,c);context.rotate(rotation);
  prizes.forEach((p,i)=>{
-  const a=-Math.PI/2-step/2+i*step,mid=-Math.PI/2+i*step;
-  ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,a,a+step);ctx.closePath();
-  ctx.fillStyle=i===0?'#f7ac75':i%2===0?'#174f3d':'#2c7858';ctx.fill();
-  ctx.lineWidth=3;ctx.strokeStyle='#fff4da';ctx.stroke();
-  const x=Math.cos(mid)*R*.68,y=Math.sin(mid)*R*.68;
-  ctx.save();ctx.translate(x,y);ctx.rotate(-angle);
-  ctx.textAlign='center';ctx.textBaseline='middle';
-  if(i===0){
-   ctx.fillStyle='#17352b';ctx.font='800 '+Math.max(12,Math.min(19,size*.033))+'px Manrope,Arial';
-   ctx.fillText('ИМЕНИННЫЙ',0,-10);ctx.fillText('ОТГУЛ',0,11);
+  const mid=-Math.PI/2+i*step,a=mid-step/2;
+  context.beginPath();context.moveTo(0,0);context.arc(0,0,R,a,a+step);context.closePath();
+  context.fillStyle=i===0?'#f7ac75':i%2===0?'#174f3d':'#2c7858';
+  context.fill();context.lineWidth=2.5;context.strokeStyle='#fff4da';context.stroke();
+  context.save();context.rotate(mid);context.translate(labelRadius,0);context.rotate(-mid-rotation);
+  context.textAlign='center';context.textBaseline='middle';
+  if(!showNames){
+   context.fillStyle=i===0?'#17352b':'#fff9e9';
+   context.font='800 '+Math.max(17,Math.min(29,size*.05))+'px Manrope,Arial';
+   context.fillText('?',0,0);
+  }else if(i===0){
+   context.fillStyle='#17352b';context.font='800 '+Math.max(11,Math.min(17,size*.029))+'px Manrope,Arial';
+   context.fillText('ИМЕНИННЫЙ',0,-10,R*.37);context.fillText('ОТГУЛ',0,10,R*.37);
   }else{
-   ctx.fillStyle='#fff9e9';ctx.font='800 '+Math.max(17,Math.min(31,size*.052))+'px Manrope,Arial';
-   ctx.fillText('1 000 000',0,-10);
-   ctx.font='800 '+Math.max(12,Math.min(19,size*.031))+'px Manrope,Arial';
-   ctx.fillText('₽',0,15);
+   context.fillStyle='#fff9e9';context.font='800 '+Math.max(13,Math.min(21,size*.037))+'px Manrope,Arial';
+   context.fillText('1 000',0,-11,R*.34);context.fillText('000 ₽',0,12,R*.34);
   }
-  ctx.restore();
+  context.restore();
  });
- ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.strokeStyle='#fffef2';ctx.lineWidth=2;ctx.stroke();
- ctx.restore();
+ context.beginPath();context.arc(0,0,R,0,2*Math.PI);context.strokeStyle='#fffef2';context.lineWidth=2;context.stroke();
+ context.restore();
 }
-function renderGalleryWheel(){
- const target=$('galleryWheel');
- if(!target)return;
- target.width=cv.width;target.height=cv.height;
- const t=target.getContext('2d');t.clearRect(0,0,target.width,target.height);
- t.drawImage(cv,0,0);
-}
+function draw(){paintWheel(cv,angle,revealed)}
+function renderGalleryWheel(){paintWheel($('galleryWheel'),angle,true)}
 
 async function loadPrizes(){
  if(!db)return;
@@ -156,6 +153,7 @@ async function spin(){
   if(idx<0)throw Error('Получен приз, которого нет в актуальном списке. Обратись к администратору.');
   $('spin').textContent='Колесо вращается…';closeReward();
   animateTo(idx,()=>{
+   revealed=true;draw();
    renderAvailablePrizes(win.is_anti?null:win.prize_id);
    spinning=false;$('spin').disabled=false;$('reroll').disabled=false;
    if(win.is_anti){needsReroll=true;$('spin').textContent='Крутить ещё раз ↻';
@@ -290,7 +288,7 @@ $('clearHistory').onclick=async()=>{
   const {data,error}=await db.rpc('fortune_clear_history');
   if(error)throw error;
   await loadHistory();renderAdmin();
-  needsReroll=false;person='';
+  needsReroll=false;person='';revealed=false;angle=0;draw();
   $('spin').disabled=false;$('spin').textContent='Крутить колесо ✦';
   closeReward();toast('История очищена. Удалено записей: '+data);
  }catch(e){toast('Ошибка: '+errorMessage(e)+'. Проверь supabase/clear_history.sql')}
