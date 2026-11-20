@@ -4,13 +4,13 @@ const $=id=>document.getElementById(id);
 const configured=typeof window.FORTUNE_SUPABASE_URL==='string'&&/^https:\/\/[-a-z0-9]+\.supabase\.co\/?$/.test(window.FORTUNE_SUPABASE_URL)&&typeof window.FORTUNE_SUPABASE_KEY==='string'&&window.FORTUNE_SUPABASE_KEY.length>15;
 const db=configured&&window.supabase?window.supabase.createClient(window.FORTUNE_SUPABASE_URL,window.FORTUNE_SUPABASE_KEY):null;
 let prizes=[],history=[],angle=0,spinning=false,person='',needsReroll=false,logged=false,adminUser=null;
-const PRIZE_CATALOG=[{"title":"Антидедлайн","description":"Право продлить дедлайн по любой внутренней задаче на 24 часа.","icon":"⏳","sort_order":0,"is_display_only":false,"is_anti":false},{"title":"Официальный высыпон","description":"Возможность один раз прийти на работу к 10:00.","icon":"😴","sort_order":1,"is_display_only":false,"is_anti":false},{"title":"Мерч-сюрприз","description":"Брендированный мерч на выбор.","icon":"🎁","sort_order":2,"is_display_only":false,"is_anti":false},{"title":"Пятничная свобода","description":"Право уйти с работы в пятницу в 15:00.","icon":"🌴","sort_order":3,"is_display_only":false,"is_anti":false},{"title":"Главный герой офиса","description":"Сегодня ты именинник! Принимай поздравления и комплименты в течение всего дня от сотрудников ОП.","icon":"🌟","sort_order":4,"is_display_only":false,"is_anti":false},{"title":"Личный сиеста-час","description":"Право увеличить обеденный перерыв на один час в любой день.","icon":"☕","sort_order":5,"is_display_only":false,"is_anti":false},{"title":"Именинный отгул","description":"Дополнительный оплачиваемый выходной в день рождения или в течение недели после него.","icon":"🎂","sort_order":6,"is_display_only":false,"is_anti":false},{"title":"Премия 500 000 ₽ до вычета НДФЛ","description":"Специальный денежный сектор. Не участвует в розыгрыше.","icon":"💎","sort_order":7,"is_display_only":true,"is_anti":false},{"title":"Плюс в карму","description":"Официальная благодарность от генерального директора в общем чате с указанием заслуг.","icon":"🏆","sort_order":8,"is_display_only":false,"is_anti":false},{"title":"Стратегический перекус","description":"Угости коллег вкусной пиццей в пятницу в офисе ОП.","icon":"🍕","sort_order":9,"is_display_only":false,"is_anti":false},{"title":"Энергия на максимум","description":"Сгоняй в спортзал, вернись бодрым и покажи, как надо закрывать задачи на 300%.","icon":"⚡","sort_order":10,"is_display_only":false,"is_anti":false}];
+const PRIZE_CATALOG=[{"title":"Именинный отгул","description":"Дополнительный оплачиваемый выходной в день рождения или в течение недели после него.","icon":"🎂","sort_order":0,"is_anti":false,"is_display_only":false},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":1,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":2,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":3,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":4,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":5,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":6,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":7,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":8,"is_anti":false,"is_display_only":true},{"title":"1 000 000 ₽","description":"Шуточный декоративный сектор. Денежные призы не разыгрываются.","icon":"💸","sort_order":9,"is_anti":false,"is_display_only":true}];
 const cv=$('wheel'),ctx=cv.getContext('2d');
 function show(id){$(id).classList.remove('hidden')}function hide(id){$(id).classList.add('hidden')}
 function toast(msg){$('notice').textContent=msg;show('notice');clearTimeout(toast.t);toast.t=setTimeout(()=>hide('notice'),5000)}
 function errorMessage(e){return e&&e.message?e.message:'Ошибка сети или базы данных'}
 function nameOf(p){return p.title}
-function isDisplayOnly(p){return p.is_display_only===true||/^Премия 500 000 ₽/.test(p.title)}
+function isDisplayOnly(p){return p.is_display_only===true}
 let lastWinnerId=null;
 function renderAvailablePrizes(winnerId=lastWinnerId){
  lastWinnerId=winnerId;
@@ -40,10 +40,10 @@ function showPrizeDetails(p){
  const story=GIFT_STORIES[p.title.trim().toLocaleLowerCase('ru')];
  $('detailIcon').textContent=story?.icon||'🎁';
  $('detailTitle').textContent=p.title;
- $('detailText').textContent=(isDisplayOnly(p)?'':'')+(p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.');
+ $('detailText').textContent=p.description?.trim()||story?.description||'Подарок от ТИАН-Трейд.';
  show('detailOverlay');$('detailClose').focus();
 }
-function revealPrizeList(){closeReward();renderAvailablePrizes();show('galleryOverlay');}
+function revealPrizeList(){closeReward();renderGalleryWheel();show('galleryOverlay');}
 
 function draw(){
  const size=Math.max(220,Math.round(cv.getBoundingClientRect().width)),d=Math.min(window.devicePixelRatio||1,2);
@@ -51,28 +51,37 @@ function draw(){
  const n=prizes.length,c=size/2,R=c-2;
  if(!n){ctx.fillStyle='#547362';ctx.font='700 15px Manrope,Arial';ctx.textAlign='center';ctx.fillText('Загрузка подарков…',c,c);return}
  const step=2*Math.PI/n;
- const colors=['#1b6449','#f28a62','#e6eac9','#2f8562','#f5bb94','#a8d8bb'];
  ctx.save();ctx.translate(c,c);ctx.rotate(angle);
  prizes.forEach((p,i)=>{
   const a=-Math.PI/2-step/2+i*step,mid=-Math.PI/2+i*step;
   ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R,a,a+step);ctx.closePath();
-  ctx.fillStyle=p.is_anti?'#bd6444':colors[i%colors.length];ctx.fill();
-  ctx.strokeStyle='#fff9ec';ctx.lineWidth=2.8;ctx.stroke();
-  ctx.save();ctx.rotate(mid);
-  const tx=R*.72;
-  ctx.beginPath();ctx.arc(tx,0,Math.max(16,Math.min(24,size*.046)),0,2*Math.PI);
-  ctx.fillStyle=p.is_anti?'#fff3e6':'#fffdf4';ctx.fill();
-  ctx.lineWidth=1.5;ctx.strokeStyle='#183d2e27';ctx.stroke();
-  ctx.fillStyle=p.is_anti?'#9a432d':'#17432e';
-  ctx.font='800 '+Math.max(13,Math.min(19,size*.034))+'px Manrope,Arial';
+  ctx.fillStyle=i===0?'#f7ac75':i%2===0?'#174f3d':'#2c7858';ctx.fill();
+  ctx.lineWidth=3;ctx.strokeStyle='#fff4da';ctx.stroke();
+  const x=Math.cos(mid)*R*.68,y=Math.sin(mid)*R*.68;
+  ctx.save();ctx.translate(x,y);ctx.rotate(-angle);
   ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.save();ctx.translate(tx,0);ctx.rotate(-mid-angle);
-  ctx.fillText(String(i+1).padStart(2,'0'),0,1);
-  ctx.restore();ctx.restore();
+  if(i===0){
+   ctx.fillStyle='#17352b';ctx.font='800 '+Math.max(12,Math.min(19,size*.033))+'px Manrope,Arial';
+   ctx.fillText('ИМЕНИННЫЙ',0,-10);ctx.fillText('ОТГУЛ',0,11);
+  }else{
+   ctx.fillStyle='#fff9e9';ctx.font='800 '+Math.max(17,Math.min(31,size*.052))+'px Manrope,Arial';
+   ctx.fillText('1 000 000',0,-10);
+   ctx.font='800 '+Math.max(12,Math.min(19,size*.031))+'px Manrope,Arial';
+   ctx.fillText('₽',0,15);
+  }
+  ctx.restore();
  });
- ctx.beginPath();ctx.arc(0,0,R,0,2*Math.PI);ctx.lineWidth=2;ctx.strokeStyle='#fffef5';ctx.stroke();
+ ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.strokeStyle='#fffef2';ctx.lineWidth=2;ctx.stroke();
  ctx.restore();
 }
+function renderGalleryWheel(){
+ const target=$('galleryWheel');
+ if(!target)return;
+ target.width=cv.width;target.height=cv.height;
+ const t=target.getContext('2d');t.clearRect(0,0,target.width,target.height);
+ t.drawImage(cv,0,0);
+}
+
 async function loadPrizes(){
  if(!db)return;
  const {data,error}=await db.from('fortune_prizes').select('id,title,description,is_anti,is_display_only,sort_order').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
@@ -95,19 +104,7 @@ async function loadHistory(){
  const {data,error}=await db.from('fortune_spins').select('id,full_name,prize_id,prize_title,is_anti,created_at').order('created_at',{ascending:false}).limit(2000);
  if(error)throw error;history=data||[];
 }
-const GIFT_STORIES={
- "антидедлайн":{icon:"⏳",lead:'Твой подарок от ТИАН-Трейд!',description:"Право продлить дедлайн по любой внутренней задаче на 24 часа."},
- "официальный высыпон":{icon:"😴",lead:'Твой подарок от ТИАН-Трейд!',description:"Возможность один раз прийти на работу к 10:00."},
- "мерч-сюрприз":{icon:"🎁",lead:'Твой подарок от ТИАН-Трейд!',description:"Брендированный мерч на выбор."},
- "пятничная свобода":{icon:"🌴",lead:'Твой подарок от ТИАН-Трейд!',description:"Право уйти с работы в пятницу в 15:00."},
- "главный герой офиса":{icon:"🌟",lead:'Твой подарок от ТИАН-Трейд!',description:"Сегодня ты именинник! Принимай поздравления и комплименты в течение всего дня от сотрудников ОП."},
- "личный сиеста-час":{icon:"☕",lead:'Твой подарок от ТИАН-Трейд!',description:"Право увеличить обеденный перерыв на один час в любой день."},
- "именинный отгул":{icon:"🎂",lead:'Твой подарок от ТИАН-Трейд!',description:"Дополнительный оплачиваемый выходной в день рождения или в течение недели после него."},
- "премия 500 000 ₽ до вычета ндфл":{icon:"💎",lead:'Твой подарок от ТИАН-Трейд!',description:"Специальный денежный сектор."},
- "плюс в карму":{icon:"🏆",lead:'Твой подарок от ТИАН-Трейд!',description:"Официальная благодарность от генерального директора в общем чате с указанием заслуг."},
- "стратегический перекус":{icon:"🍕",lead:'Твой подарок от ТИАН-Трейд!',description:"Угости коллег вкусной пиццей в пятницу в офисе ОП."},
- "энергия на максимум":{icon:"⚡",lead:'Твой подарок от ТИАН-Трейд!',description:"Сгоняй в спортзал, вернись бодрым и покажи, как надо закрывать задачи на 300%."}
-};
+const GIFT_STORIES={'именинный отгул':{icon:'🎂',lead:'Твой дополнительный выходной!',description:"Дополнительный оплачиваемый выходной в день рождения или в течение недели после него."}};
 function showReward(tag,title,detail,warning=false){
  const story=GIFT_STORIES[title.trim().toLocaleLowerCase('ru')];
  $('resultTag').textContent=tag;
