@@ -5,15 +5,15 @@ alter table public.fortune_prizes add column if not exists is_display_only boole
 delete from public.fortune_prizes;
 insert into public.fortune_prizes(title,description,is_anti,is_display_only,sort_order) values
  ('Именинный отгул','Дополнительный оплачиваемый выходной в день рождения или в течение недели после него.',false,false,0),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,1),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,2),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,3),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,4),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,5),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,6),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,7),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,8),
- ('1 000 000 ₽','Шуточный декоративный сектор. Денежные призы не разыгрываются.',false,true,9);
+ ('1 000 000 ₽',false,true,1),
+ ('1 000 000 ₽',false,true,2),
+ ('1 000 000 ₽',false,true,3),
+ ('1 000 000 ₽',false,true,4),
+ ('1 000 000 ₽',false,true,5),
+ ('1 000 000 ₽',false,true,6),
+ ('1 000 000 ₽',false,true,7),
+ ('1 000 000 ₽',false,true,8),
+ ('1 000 000 ₽',false,true,9);
 create or replace function public.fortune_draw(p_first text, p_last text)
 returns table (prize_id uuid, prize_title text, prize_description text, is_anti boolean)
 language plpgsql security definer set search_path = '' as $$
